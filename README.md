@@ -1,7 +1,21 @@
-<h1 align="center" id="title">SmartOrder Web</h1>
+<h1 align="center">
+  <img alt="smartorder" title="smartorder" src=".github/logo.svg" />
+</h1>
 
-<p id="description">Aplicação para realização de pedidos</p>
-  
+<p align="center">
+ <img src="https://img.shields.io/static/v1?label=version&message=01&color=61DAFB&labelColor=333" />
+</p>
+
+<br>
+
+<p align="center">
+  <img alt="SmartOrder" src=".github/smart-order-home.png" width="100%">
+</p>
+
+## 💻 Projeto
+
+O SmartOrder é uma aplicação inovadora projetada para agilizar o processo de atendimento em restaurantes e bares. Com uma interface intuitiva e fácil de usar, SmartOrder permite que os garçons anotem os pedidos dos clientes de forma rápida e eficiente, eliminando a necessidade de anotações em papel e minimizando erros de comunicação.
+
 <h2>🧐 Features</h2>
 
 Here're some of the project's best features:
@@ -13,10 +27,10 @@ Here're some of the project's best features:
 <p>1. Wip</p>
 
   
-  
-<h2>💻 Built with</h2>
+## 🚀 Built with
 
-Technologies used in the project:
+Tecnologias utilizadas no projeto:
 
-*   React
-*   Vite
+- [React](https://reactjs.org)
+- [Next.js](https://nextjs.org/)
+- [TypeScript](https://www.typescriptlang.org/)
