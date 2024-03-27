@@ -1,10 +1,10 @@
+import { useEffect } from 'react';
+
+import closeIcon from '../../assets/images/close-icon.svg';
 import { Order } from '../../types/Order';
 import { formatCurrency } from '../../utils/formatCurrency';
 
-import closeIcon from '../../assets/images/close-icon.svg';
-
 import { Actions, ModalBody, OrderDetails, Overlay } from './styles';
-import { useEffect } from 'react';
 
 interface OrderModalProps {
   visible: boolean;

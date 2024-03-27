@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import socketIO from 'socket.io-client';
 
-import { Container } from './styles';
-
 import { api } from '../../services/api';
 import { Order } from '../../types/Order';
 import { OrdersBoard } from '../OrdersBoard';
+
+import { Container } from './styles';
 
 export function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
