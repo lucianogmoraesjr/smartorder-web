@@ -18,9 +18,9 @@ interface OrderModalProps {
 export function OrderModal({
   visible,
   order,
+  isLoading,
   onCloseModal,
   onCancelOrder,
-  isLoading,
   onChangeOrderStatus,
 }: OrderModalProps) {
   useEffect(() => {
@@ -40,7 +40,7 @@ export function OrderModal({
   }
 
   const total = order.products.reduce((acc, { product, quantity }) => {
-    acc += product.price * quantity;
+    acc += (product.priceInCents * quantity) / 100;
 
     return acc;
   }, 0);
@@ -76,8 +76,8 @@ export function OrderModal({
           <strong>Itens</strong>
 
           <div className="order-items">
-            {order.products.map(({ _id, product, quantity }) => (
-              <div key={_id} className="item">
+            {order.products.map(({ product, quantity }) => (
+              <div key={product.id} className="item">
                 <img
                   src={`http://localhost:3333/tmp/${product.imagePath}`}
                   alt={product.name}
@@ -89,7 +89,7 @@ export function OrderModal({
 
                 <div className="product-details">
                   <strong>{product.name}</strong>
-                  <span>{formatCurrency(product.price)}</span>
+                  <span>{formatCurrency(product.priceInCents / 100)}</span>
                 </div>
               </div>
             ))}

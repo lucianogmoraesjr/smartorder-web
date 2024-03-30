@@ -46,12 +46,12 @@ export function OrdersBoard({
     const status =
       selectedOrder.status === 'WAITING' ? 'IN_PRODUCTION' : 'DONE';
 
-    await api.patch(`orders/${selectedOrder._id}`, { status });
+    await api.patch(`orders/${selectedOrder.id}`, { status });
 
     toast.success(
       `Status da mesa ${selectedOrder.table} alterado com sucesso.`,
     );
-    onOrderStatusChange(selectedOrder._id, status);
+    onOrderStatusChange(selectedOrder.id, status);
     setIsLoading(false);
     setIsModalVisible(false);
   }
@@ -63,10 +63,10 @@ export function OrdersBoard({
 
     setIsLoading(true);
 
-    await api.delete(`orders/${selectedOrder._id}`);
+    await api.delete(`orders/${selectedOrder.id}`);
 
     toast.success(`O pedido da mesa ${selectedOrder.table} foi cancelado!`);
-    onCancelOrder(selectedOrder._id);
+    onCancelOrder(selectedOrder.id);
     setIsLoading(false);
     setIsModalVisible(false);
   }
@@ -92,7 +92,7 @@ export function OrdersBoard({
         <OrdersContainer>
           {orders.map(order => (
             <button
-              key={order._id}
+              key={order.id}
               type="button"
               onClick={() => handleOpenModal(order)}
             >

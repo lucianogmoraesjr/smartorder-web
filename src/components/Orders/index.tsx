@@ -25,13 +25,13 @@ export function Orders() {
   }, []);
 
   function handleCancelOrder(orderId: string) {
-    setOrders(prevState => prevState.filter(order => order._id !== orderId));
+    setOrders(prevState => prevState.filter(order => order.id !== orderId));
   }
 
   function handleOrderStatusChange(orderId: string, status: Order['status']) {
     setOrders(prevState =>
       prevState.map(order =>
-        order._id === orderId ? { ...order, status } : order,
+        order.id === orderId ? { ...order, status } : order,
       ),
     );
   }

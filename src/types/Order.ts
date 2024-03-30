@@ -1,14 +1,14 @@
 export interface Order {
-  _id: string;
+  id: string;
   table: string;
   status: 'WAITING' | 'IN_PRODUCTION' | 'DONE';
   products: Array<{
-    _id: string;
     quantity: number;
     product: {
+      id: string;
       name: string;
       imagePath: string;
-      price: number;
+      priceInCents: number;
     };
   }>;
 }
