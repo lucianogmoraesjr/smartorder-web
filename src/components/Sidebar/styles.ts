@@ -31,8 +31,9 @@ export const NavContainer = styled.div`
   gap: 2.5rem;
 `;
 
-export const NavItem = styled.div`
+export const NavItem = styled.nav`
   a {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,10 +43,27 @@ export const NavItem = styled.div`
     color: #666;
     font-size: 0.875rem;
     line-height: 1.4;
+    font-weight: 500;
 
     img {
       width: 1.125rem;
       height: 1.125rem;
+    }
+
+    &.active {
+      color: #d73035;
+
+      &::after {
+        content: '';
+        background: #d73035;
+        position: absolute;
+        bottom: -0.5rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0.75rem;
+        height: 0.09375rem;
+        border-radius: 999px;
+      }
     }
   }
 `;
