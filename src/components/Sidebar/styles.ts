@@ -45,9 +45,13 @@ export const NavItem = styled.nav`
     line-height: 1.4;
     font-weight: 500;
 
-    img {
+    svg {
       width: 1.125rem;
       height: 1.125rem;
+
+      path {
+        stroke: #666;
+      }
     }
 
     &.active {
@@ -63,6 +67,12 @@ export const NavItem = styled.nav`
         width: 0.75rem;
         height: 0.09375rem;
         border-radius: 999px;
+      }
+
+      svg {
+        path {
+          stroke: #d73035;
+        }
       }
     }
   }

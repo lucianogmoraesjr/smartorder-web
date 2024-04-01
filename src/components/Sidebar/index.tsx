@@ -1,11 +1,11 @@
 import { NavLink } from 'react-router-dom';
 
-import historyIcon from '../../assets/images/history-icon.svg';
-import homeIcon from '../../assets/images/home-icon.svg';
-import logoutIcon from '../../assets/images/logout-icon.svg';
-import menuIcon from '../../assets/images/menu-icon.svg';
-import profileIcon from '../../assets/images/profile-icon.svg';
-import usersIcon from '../../assets/images/users-icon.svg';
+import HistoryIcon from '../Icons/HistoryIcon';
+import HomeIcon from '../Icons/HomeIcon';
+import LogoutIcon from '../Icons/LogoutIcon';
+import MenuIcon from '../Icons/MenuIcon';
+import ProfileIcon from '../Icons/ProfileIcon';
+import UsersIcon from '../Icons/UsersIcon';
 
 import {
   Container,
@@ -26,28 +26,28 @@ export function Sidebar() {
       <NavContainer>
         <NavItem>
           <NavLink to="/">
-            <img src={homeIcon} alt="Ícone de casa" />
+            <HomeIcon />
             Home
           </NavLink>
         </NavItem>
 
         <NavItem>
           <a href="/">
-            <img src={historyIcon} alt="Ícone de histórico" />
+            <HistoryIcon />
             Histórico
           </a>
         </NavItem>
 
         <NavItem>
           <NavLink to="/products">
-            <img src={menuIcon} alt="Ícone de cardápio" />
+            <MenuIcon />
             Cardápio
           </NavLink>
         </NavItem>
 
         <NavItem>
           <a href="/">
-            <img src={usersIcon} alt="Ícone de usuários" />
+            <UsersIcon />
             Usuários
           </a>
         </NavItem>
@@ -56,13 +56,13 @@ export function Sidebar() {
       <ProfileContainer>
         <NavItem>
           <a href="/">
-            <img src={profileIcon} alt="Ícone de perfil do usuário" />
+            <ProfileIcon />
             Meu perfil
           </a>
         </NavItem>
 
         <button type="button">
-          <img src={logoutIcon} alt="Ícone de botão de sair" />
+          <LogoutIcon />
           Sair
         </button>
       </ProfileContainer>
