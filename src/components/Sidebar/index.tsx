@@ -1,3 +1,5 @@
+import { NavLink } from 'react-router-dom';
+
 import historyIcon from '../../assets/images/history-icon.svg';
 import homeIcon from '../../assets/images/home-icon.svg';
 import logoutIcon from '../../assets/images/logout-icon.svg';
@@ -23,10 +25,10 @@ export function Sidebar() {
 
       <NavContainer>
         <NavItem>
-          <a href="/">
+          <NavLink to="/">
             <img src={homeIcon} alt="Ícone de casa" />
             Home
-          </a>
+          </NavLink>
         </NavItem>
 
         <NavItem>
@@ -37,10 +39,10 @@ export function Sidebar() {
         </NavItem>
 
         <NavItem>
-          <a href="/">
+          <NavLink to="/products">
             <img src={menuIcon} alt="Ícone de cardápio" />
             Cardápio
-          </a>
+          </NavLink>
         </NavItem>
 
         <NavItem>
