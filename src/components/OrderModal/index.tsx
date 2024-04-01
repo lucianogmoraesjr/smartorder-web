@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-import closeIcon from '../../assets/images/close-icon.svg';
 import { Order } from '../../types/Order';
 import { formatCurrency } from '../../utils/formatCurrency';
+import CloseIcon from '../Icons/CloseIcon';
 
 import { Actions, ModalBody, OrderDetails, Overlay } from './styles';
 
@@ -52,7 +52,7 @@ export function OrderModal({
           <strong>Mesa {order.table}</strong>
 
           <button type="button" onClick={onCloseModal}>
-            <img src={closeIcon} alt="Fechar" />
+            <CloseIcon />
           </button>
         </header>
 

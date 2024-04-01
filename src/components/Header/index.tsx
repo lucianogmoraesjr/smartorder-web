@@ -1,4 +1,4 @@
-import homeIcon from '../../assets/images/home-icon.svg';
+import HomeIcon from '../Icons/HomeIcon';
 
 import { Container, Content, Title } from './styles';
 
@@ -8,7 +8,7 @@ export function Header() {
       <Content>
         <div className="page-details">
           <Title>
-            <img src={homeIcon} alt="Ícone de casa" />
+            <HomeIcon />
             <h1>Home</h1>
           </Title>
 
