@@ -21,9 +21,14 @@ O SmartOrder é uma aplicação inovadora projetada para agilizar o processo de 
 Aqui estão algumas das melhores features do projeto:
 
 * Acompanhe os pedidos chegando em tempo real
-* Listagem dos produtos disponíveis (WIP)
+* Listagem dos produtos disponíveis
 * Criação de novos produtos (WIP)
 * Edição de produtos já cadastrados (WIP)
+* Deleção de produtos (WIP)
+* Listagem de categorias
+* Criação de novas categorias
+* Edição de categorias já cadastradas (WIP)
+* Deleção de categorias (WIP)
 
 <h2>🛠️ Installation Steps:</h2>
 
