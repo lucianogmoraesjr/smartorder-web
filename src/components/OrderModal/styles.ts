@@ -1,54 +1,18 @@
 import { styled } from 'styled-components';
 
-export const Overlay = styled.div`
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  left: 0;
-  top: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4.5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
+export const StatusContainer = styled.div`
+  margin-top: 2rem;
 
-export const ModalBody = styled.div`
-  background: #fff;
-  width: 30rem;
-  border-radius: 0.5rem;
-  padding: 2rem;
-
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    strong {
-      font-size: 1.5rem;
-    }
-
-    button {
-      all: unset;
-      line-height: 0;
-      cursor: pointer;
-    }
+  small {
+    font-size: 0.875rem;
+    opacity: 0.8;
   }
 
-  .status-container {
-    margin-top: 2rem;
-
-    small {
-      font-size: 0.875rem;
-      opacity: 0.8;
-    }
-
-    div {
-      margin-top: 0.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+  div {
+    margin-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 `;
 
@@ -115,7 +79,8 @@ export const OrderDetails = styled.div`
 
 export const Actions = styled.footer`
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
   margin-top: 2rem;
 
   button:disabled {
@@ -124,15 +89,11 @@ export const Actions = styled.footer`
   }
 
   .primary {
-    background: #333;
-    border-radius: 3rem;
+    background: #d73035;
+    border-radius: 999px;
     border: 0;
     color: #fff;
-    padding: 0.75rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
+    padding: 0.875rem 3.5rem;
   }
 
   .cancel {
@@ -140,7 +101,6 @@ export const Actions = styled.footer`
     color: #d73035;
     font-weight: bold;
     text-align: center;
-    margin-top: 1rem;
     cursor: pointer;
   }
 `;
