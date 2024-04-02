@@ -5,7 +5,7 @@ import { api } from '../../services/api';
 import { Order } from '../../types/Order';
 import { OrderModal } from '../OrderModal';
 
-import { Board, OrdersContainer } from './styles';
+import { Board, OrdersContainer, QuantityBadge } from './styles';
 
 interface OrdersBoardProps {
   icon: string;
@@ -85,7 +85,7 @@ export function OrdersBoard({
       <header>
         <span>{icon}</span>
         <strong>{title}</strong>
-        <span>(1)</span>
+        <QuantityBadge>{orders.length}</QuantityBadge>
       </header>
 
       {orders.length > 0 && (
