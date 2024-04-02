@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 import { Home } from './pages/Home';
 import { Menu } from './pages/Menu';
@@ -18,7 +18,7 @@ export function Router() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="menu" element={<Menu />}>
-        <Route index element={<Products />} />
+        <Route index element={<Navigate to="products" replace />} />
         <Route path="products" element={<Products />} />
         <Route path="categories" element={<Categories />} />
         <Route path="*" element={<NoMatch />} />

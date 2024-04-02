@@ -39,7 +39,7 @@ export function Sidebar() {
         </NavItem>
 
         <NavItem>
-          <NavLink to="/menu/products">
+          <NavLink to="/menu">
             <MenuIcon />
             Cardápio
           </NavLink>
