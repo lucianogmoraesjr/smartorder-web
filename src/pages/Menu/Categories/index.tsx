@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import PencilIcon from '../../../components/Icons/PencilIcon';
 import TrashIcon from '../../../components/Icons/TrashIcon';
+import { Modal } from '../../../components/Modal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { api } from '../../../services/api';
@@ -16,15 +17,24 @@ interface Category {
 
 export function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     api.get('categories').then(response => setCategories(response.data));
   }, []);
 
+  function handleOpenModal() {
+    setIsModalVisible(true);
+  }
+
   return (
     <Container>
+      <Modal isVisible={isModalVisible} title="Mesa 2" />
+
       <TableHeader title="Categorias" length={categories.length}>
-        <button type="button">Nova categoria</button>
+        <button type="button" onClick={handleOpenModal}>
+          Nova categoria
+        </button>
       </TableHeader>
 
       <Table>
