@@ -1,12 +1,33 @@
+import { useEffect, useState } from 'react';
+
 import { Header } from '../../components/Header';
 import MenuIcon from '../../components/Icons/MenuIcon';
 import PencilIcon from '../../components/Icons/PencilIcon';
 import TrashIcon from '../../components/Icons/TrashIcon';
-import { QuantityBadge } from '../../components/OrdersBoard/styles';
+import { QuantityBadge } from '../../components/QuantityBadge';
+import { api } from '../../services/api';
+import { formatCurrency } from '../../utils/formatCurrency';
 
 import { Container, NavBar, ProductsContainer, ProductsTable } from './styles';
 
+interface Product {
+  id: string;
+  name: string;
+  priceInCents: number;
+  imagePath: string;
+  category: {
+    name: string;
+    emoji: string;
+  };
+}
+
 export function Products() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    api.get('products').then(response => setProducts(response.data));
+  }, []);
+
   return (
     <Container>
       <Header
@@ -45,53 +66,31 @@ export function Products() {
           </thead>
 
           <tbody>
-            <tr>
-              <td>
-                <img
-                  src="http://localhost:3333/tmp/1710780936676-quatro-queijos.png"
-                  alt=""
-                />
-              </td>
-              <td>Quatro Queijos</td>
-              <td>🍕 Pizza</td>
-              <td>R$ 40,00</td>
+            {products.map(product => (
+              <tr key={product.id}>
+                <td>
+                  <img
+                    src={`http://localhost:3333/tmp/${product.imagePath}`}
+                    alt={`Imagem de ${product.name}`}
+                  />
+                </td>
+                <td>{product.name}</td>
+                <td>{`${product.category.emoji} ${product.category.name}`}</td>
+                <td>{formatCurrency(product.priceInCents / 100)}</td>
 
-              <td>
-                <div className="actions">
-                  <a href="/">
-                    <PencilIcon />
-                  </a>
+                <td>
+                  <div className="actions">
+                    <a href="/">
+                      <PencilIcon />
+                    </a>
 
-                  <button type="button">
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
-            </tr>
-
-            <tr>
-              <td>
-                <img
-                  src="http://localhost:3333/tmp/1710780936676-quatro-queijos.png"
-                  alt=""
-                />
-              </td>
-              <td>Quatro Queijos</td>
-              <td>🍕 Pizza</td>
-              <td>R$ 40,00</td>
-
-              <td>
-                <div className="actions">
-                  <a href="/">
-                    <PencilIcon />
-                  </a>
-
-                  <button type="button">
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
-            </tr>
+                    <button type="button">
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </ProductsTable>
       </ProductsContainer>
