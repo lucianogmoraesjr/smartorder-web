@@ -6,6 +6,7 @@ export const Container = styled.header`
   align-items: center;
   height: 4.5rem;
   margin-top: 2.5rem;
+  margin-bottom: 3rem;
 `;
 
 export const Content = styled.div`
