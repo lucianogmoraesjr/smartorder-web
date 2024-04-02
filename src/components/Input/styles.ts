@@ -16,10 +16,12 @@ export const StyledInput = styled.input`
   padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
 
   &::placeholder {
     color: #999;
-    font-size: 0%.875rem;
+    font-size: 0.875rem;
     line-height: 1.5;
   }
 `;
