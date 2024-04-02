@@ -1,18 +1,24 @@
-import HomeIcon from '../Icons/HomeIcon';
+import { ComponentType } from 'react';
 
 import { Container, Content, Title } from './styles';
 
-export function Header() {
+interface HeaderProps {
+  title: string;
+  subtitle: string;
+  icon: ComponentType;
+}
+
+export function Header({ title, subtitle, icon: Icon }: HeaderProps) {
   return (
     <Container>
       <Content>
         <div className="page-details">
           <Title>
-            <HomeIcon />
-            <h1>Home</h1>
+            <Icon />
+            <h1>{title}</h1>
           </Title>
 
-          <h2>Acompanhe os pedidos dos clientes</h2>
+          <h2>{subtitle}</h2>
         </div>
       </Content>
     </Container>
