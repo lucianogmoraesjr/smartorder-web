@@ -9,14 +9,16 @@ import { EditCategoryForm } from './styles';
 
 interface EditCategoryModalProps {
   isVisible: boolean;
+  category: Category;
   onClose: () => void;
-  category: Category | null;
+  onDelete: (category: Category) => void;
 }
 
 export function EditCategoryModal({
   isVisible,
-  onClose,
   category,
+  onClose,
+  onDelete,
 }: EditCategoryModalProps) {
   const [emoji, setEmoji] = useState('');
   const [name, setName] = useState('');
@@ -29,6 +31,11 @@ export function EditCategoryModal({
     setEmoji(category.emoji);
     setName(category.name);
   }, [category]);
+
+  function handleOpenDeleteModal() {
+    onDelete(category);
+    onClose();
+  }
 
   if (!category) {
     return null;
@@ -52,7 +59,11 @@ export function EditCategoryModal({
         />
 
         <div className="actions">
-          <Button $variant="secondary" type="button">
+          <Button
+            $variant="secondary"
+            type="button"
+            onClick={handleOpenDeleteModal}
+          >
             Excluir Categoria
           </Button>
 

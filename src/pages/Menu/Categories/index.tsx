@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { Category as CategoryComponent } from '../../../components/Category';
+import { DeleteModal } from '../../../components/DeleteModal';
 import { EditCategoryModal } from '../../../components/EditCategoryModal';
 import PencilIcon from '../../../components/Icons/PencilIcon';
 import TrashIcon from '../../../components/Icons/TrashIcon';
@@ -13,9 +15,13 @@ import { Container } from './styles';
 
 export function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-    null,
+  const [categoryBeingDeleted, setCategoryBeingDeleted] = useState<Category>(
+    {} as Category,
   );
+  const [selectedCategory, setSelectedCategory] = useState<Category>(
+    {} as Category,
+  );
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
     useState(false);
   const [isNewCategoryModalVisible, setIsNewCategoryModalVisible] =
@@ -42,8 +48,17 @@ export function Categories() {
     setIsEditCategoryModalVisible(false);
   }, []);
 
+  const handleCloseDeleteModal = useCallback(() => {
+    setIsDeleteModalVisible(false);
+  }, []);
+
   function handleNewCategory(category: Category) {
     setCategories(prevState => prevState.concat(category));
+  }
+
+  async function handleDeleteCategory(category: Category) {
+    setIsDeleteModalVisible(true);
+    setCategoryBeingDeleted(category);
   }
 
   return (
@@ -56,9 +71,25 @@ export function Categories() {
 
       <EditCategoryModal
         isVisible={isEditCategoryModalVisible}
-        onClose={handleCloseEditCategoryModal}
         category={selectedCategory}
+        onClose={handleCloseEditCategoryModal}
+        onDelete={handleDeleteCategory}
       />
+
+      <DeleteModal
+        title="Excluir Categoria"
+        confirmText="Tem certeza que deseja excluir a categoria?"
+        cancelLabel="Manter Categoria"
+        confirmLabel="Excluir Categoria"
+        isVisible={isDeleteModalVisible}
+        onClose={handleCloseDeleteModal}
+        onConfirm={() => {}}
+      >
+        <CategoryComponent
+          emoji={categoryBeingDeleted.emoji}
+          name={categoryBeingDeleted.name}
+        />
+      </DeleteModal>
 
       <TableHeader title="Categorias" length={categories.length}>
         <button type="button" onClick={handleOpenNewCategoryModal}>
@@ -89,7 +120,10 @@ export function Categories() {
                     <PencilIcon />
                   </button>
 
-                  <button type="button">
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteCategory(category)}
+                  >
                     <TrashIcon />
                   </button>
                 </div>
