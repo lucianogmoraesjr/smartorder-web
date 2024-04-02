@@ -4,8 +4,9 @@ import { toast } from 'react-toastify';
 import { api } from '../../services/api';
 import { Order } from '../../types/Order';
 import { OrderModal } from '../OrderModal';
+import { QuantityBadge } from '../QuantityBadge';
 
-import { Board, OrdersContainer, QuantityBadge } from './styles';
+import { Board, OrdersContainer } from './styles';
 
 interface OrdersBoardProps {
   icon: string;
