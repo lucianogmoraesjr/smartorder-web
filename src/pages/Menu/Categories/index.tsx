@@ -1,38 +1,67 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
+import { EditCategoryModal } from '../../../components/EditCategoryModal';
 import PencilIcon from '../../../components/Icons/PencilIcon';
 import TrashIcon from '../../../components/Icons/TrashIcon';
-import { Modal } from '../../../components/Modal';
+import { NewCategoryModal } from '../../../components/NewCategoryModal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { api } from '../../../services/api';
+import { Category } from '../../../types/Category';
 
 import { Container } from './styles';
 
-interface Category {
-  id: string;
-  name: string;
-  emoji: string;
-}
-
 export function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+    null,
+  );
+  const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
+    useState(false);
+  const [isNewCategoryModalVisible, setIsNewCategoryModalVisible] =
+    useState(false);
 
   useEffect(() => {
     api.get('categories').then(response => setCategories(response.data));
   }, []);
 
-  function handleOpenModal() {
-    setIsModalVisible(true);
+  function handleOpenNewCategoryModal() {
+    setIsNewCategoryModalVisible(true);
+  }
+
+  const handleCloseNewCategoryModal = useCallback(() => {
+    setIsNewCategoryModalVisible(false);
+  }, []);
+
+  function handleOpenEditCategoryModal(category: Category) {
+    setSelectedCategory(category);
+    setIsEditCategoryModalVisible(true);
+  }
+
+  const handleCloseEditCategoryModal = useCallback(() => {
+    setIsEditCategoryModalVisible(false);
+  }, []);
+
+  function handleNewCategory(category: Category) {
+    setCategories(prevState => prevState.concat(category));
   }
 
   return (
     <Container>
-      <Modal isVisible={isModalVisible} title="Mesa 2" />
+      <NewCategoryModal
+        isVisible={isNewCategoryModalVisible}
+        onClose={handleCloseNewCategoryModal}
+        onNewCategory={handleNewCategory}
+      />
+
+      <EditCategoryModal
+        isVisible={isEditCategoryModalVisible}
+        onClose={handleCloseEditCategoryModal}
+        category={selectedCategory}
+      />
 
       <TableHeader title="Categorias" length={categories.length}>
-        <button type="button" onClick={handleOpenModal}>
+        <button type="button" onClick={handleOpenNewCategoryModal}>
           Nova categoria
         </button>
       </TableHeader>
@@ -53,9 +82,12 @@ export function Categories() {
               <td>{category.name}</td>
               <td>
                 <div className="actions">
-                  <a href="/">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditCategoryModal(category)}
+                  >
                     <PencilIcon />
-                  </a>
+                  </button>
 
                   <button type="button">
                     <TrashIcon />

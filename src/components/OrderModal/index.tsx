@@ -21,7 +21,7 @@ export function OrderModal({
   onCancelOrder,
   onChangeOrderStatus,
 }: OrderModalProps) {
-  if (!visible || !order) {
+  if (!order) {
     return null;
   }
 
