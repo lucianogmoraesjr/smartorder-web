@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { Header } from '../../components/Header';
-import MenuIcon from '../../components/Icons/MenuIcon';
-import PencilIcon from '../../components/Icons/PencilIcon';
-import TrashIcon from '../../components/Icons/TrashIcon';
-import { QuantityBadge } from '../../components/QuantityBadge';
-import { api } from '../../services/api';
-import { formatCurrency } from '../../utils/formatCurrency';
+import PencilIcon from '../../../components/Icons/PencilIcon';
+import TrashIcon from '../../../components/Icons/TrashIcon';
+import { QuantityBadge } from '../../../components/QuantityBadge';
+import { api } from '../../../services/api';
+import { formatCurrency } from '../../../utils/formatCurrency';
 
-import { Container, NavBar, ProductsContainer, ProductsTable } from './styles';
+import { Container, ProductsContainer, ProductsTable } from './styles';
 
 interface Product {
   id: string;
@@ -30,20 +28,6 @@ export function Products() {
 
   return (
     <Container>
-      <Header
-        title="Cardápio"
-        subtitle="Gerencie os produtos do seu estabelecimento"
-        icon={MenuIcon}
-      />
-
-      <NavBar>
-        <a href="/" className="active">
-          Produtos
-        </a>
-
-        <a href="/">Categorias</a>
-      </NavBar>
-
       <ProductsContainer>
         <header className="products-header">
           <div>
