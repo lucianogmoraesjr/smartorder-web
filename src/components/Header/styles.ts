@@ -33,9 +33,13 @@ export const Title = styled.div`
   align-items: center;
   gap: 0.5rem;
 
-  img {
+  svg {
     width: 1.5rem;
     height: 1.5rem;
+
+    path {
+      stroke: #333;
+    }
   }
 
   h1 {
