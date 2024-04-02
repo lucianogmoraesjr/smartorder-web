@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { Category } from '../../types/Category';
 import { Button } from '../Button';
 import { Input } from '../Input';
@@ -16,6 +18,18 @@ export function EditCategoryModal({
   onClose,
   category,
 }: EditCategoryModalProps) {
+  const [emoji, setEmoji] = useState('');
+  const [name, setName] = useState('');
+
+  useEffect(() => {
+    if (!category) {
+      return;
+    }
+
+    setEmoji(category.emoji);
+    setName(category.name);
+  }, [category]);
+
   if (!category) {
     return null;
   }
@@ -23,12 +37,18 @@ export function EditCategoryModal({
   return (
     <Modal isVisible={isVisible} title="Editar Categoria" onClose={onClose}>
       <EditCategoryForm>
-        <Input name="emoji" label="Emoji" defaultValue={category.emoji} />
+        <Input
+          name="emoji"
+          label="Emoji"
+          value={emoji}
+          onChange={e => setEmoji(e.target.value)}
+        />
 
         <Input
           name="name"
           label="Nome da categoria"
-          defaultValue={category.name}
+          value={name}
+          onChange={e => setName(e.target.value)}
         />
 
         <div className="actions">
