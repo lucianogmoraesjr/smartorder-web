@@ -5,7 +5,7 @@ import { ThemeProvider } from 'styled-components';
 
 import { Router } from '../../Router';
 import { GlobalStyles } from '../../styles/GlobalStyles';
-import defaultTheme from '../../styles/themes/default';
+import { defaultTheme } from '../../styles/themes/default';
 import { Sidebar } from '../Sidebar';
 
 import { Container } from './styles';

@@ -14,7 +14,7 @@ export const Container = styled.div`
 
 export const Logo = styled.div`
   font-size: 1.5rem;
-  color: #666;
+  color: ${({ theme }) => theme.colors.gray[400]};
 
   strong {
     font-weight: 700;
@@ -40,7 +40,7 @@ export const NavItem = styled.nav`
     gap: 0.5rem;
 
     text-decoration: none;
-    color: #666;
+    color: ${({ theme }) => theme.colors.gray[400]};
     font-size: 0.875rem;
     line-height: 1.4;
     font-weight: 500;
@@ -50,16 +50,16 @@ export const NavItem = styled.nav`
       height: 1.125rem;
 
       path {
-        stroke: #666;
+        stroke: ${({ theme }) => theme.colors.gray[400]};
       }
     }
 
     &.active {
-      color: #d73035;
+      color: ${({ theme }) => theme.colors.red.main};
 
       &::after {
         content: '';
-        background: #d73035;
+        background: ${({ theme }) => theme.colors.red.main};
         position: absolute;
         bottom: -0.5rem;
         left: 50%;
@@ -71,7 +71,7 @@ export const NavItem = styled.nav`
 
       svg {
         path {
-          stroke: #d73035;
+          stroke: ${({ theme }) => theme.colors.red.main};
         }
       }
     }
@@ -89,7 +89,7 @@ export const ProfileContainer = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    color: #666;
+    color: ${({ theme }) => theme.colors.gray[400]};
 
     cursor: pointer;
 

@@ -21,7 +21,7 @@ export const Content = styled.div`
     gap: 1rem;
 
     h2 {
-      color: #666;
+      color: ${({ theme }) => theme.colors.gray[500]};
       font-weight: 400;
       font-size: 1rem;
       line-height: 1.5;
@@ -39,7 +39,7 @@ export const Title = styled.div`
     height: 1.5rem;
 
     path {
-      stroke: #333;
+      stroke: ${({ theme }) => theme.colors.gray[500]};
     }
   }
 

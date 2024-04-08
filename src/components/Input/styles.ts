@@ -8,19 +8,19 @@ export const Container = styled.div`
   label {
     font-size: 0.875rem;
     line-height: 1.5;
-    color: #333;
+    color: ${({ theme }) => theme.colors.gray[500]};
   }
 `;
 
 export const StyledInput = styled.input`
   padding: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid ${({ theme }) => theme.colors.gray[200]};
   border-radius: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
 
   &::placeholder {
-    color: #999;
+    color: ${({ theme }) => theme.colors.gray[300]};
     font-size: 0.875rem;
     line-height: 1.5;
   }

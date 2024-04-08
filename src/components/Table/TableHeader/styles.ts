@@ -25,7 +25,7 @@ export const Header = styled.header`
 
   > button {
     all: unset;
-    color: #d73035;
+    color: ${({ theme }) => theme.colors.red.main};
     font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.5;
