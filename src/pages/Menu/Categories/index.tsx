@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 import { Category } from '../../../@types/Category';
 import { Category as CategoryComponent } from '../../../components/Category';
@@ -9,18 +10,16 @@ import TrashIcon from '../../../components/Icons/TrashIcon';
 import { NewCategoryModal } from '../../../components/NewCategoryModal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
-import { api } from '../../../services/api';
+import CategoriesService from '../../../services/CategoriesService';
 
 import { Container } from './styles';
 
 export function Categories() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryBeingDeleted, setCategoryBeingDeleted] = useState<Category>(
-    {} as Category,
-  );
   const [selectedCategory, setSelectedCategory] = useState<Category>(
     {} as Category,
   );
+
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
     useState(false);
@@ -28,7 +27,17 @@ export function Categories() {
     useState(false);
 
   useEffect(() => {
-    api.get('categories').then(response => setCategories(response.data));
+    async function fetchCategories() {
+      try {
+        const categoriesList = await CategoriesService.listCategories();
+
+        setCategories(categoriesList);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    fetchCategories();
   }, []);
 
   function handleOpenNewCategoryModal() {
@@ -56,9 +65,25 @@ export function Categories() {
     setCategories(prevState => prevState.concat(category));
   }
 
-  async function handleDeleteCategory(category: Category) {
+  const handleDeleteCategory = useCallback((category: Category) => {
     setIsDeleteModalVisible(true);
-    setCategoryBeingDeleted(category);
+    setSelectedCategory(category);
+  }, []);
+
+  async function handleConfirmDeleteCategory() {
+    try {
+      await CategoriesService.deleteCategory(selectedCategory.id);
+
+      setCategories(prevState =>
+        prevState.filter(category => category.id !== selectedCategory.id),
+      );
+
+      handleCloseDeleteModal();
+
+      toast.success('Categoria deletada com sucesso!');
+    } catch {
+      toast.error('Ocorreu um erro ao deletar a categoria!');
+    }
   }
 
   return (
@@ -83,11 +108,11 @@ export function Categories() {
         confirmLabel="Excluir Categoria"
         isVisible={isDeleteModalVisible}
         onClose={handleCloseDeleteModal}
-        onConfirm={() => {}}
+        onConfirm={handleConfirmDeleteCategory}
       >
         <CategoryComponent
-          emoji={categoryBeingDeleted.emoji}
-          name={categoryBeingDeleted.name}
+          emoji={selectedCategory.emoji}
+          name={selectedCategory.name}
         />
       </DeleteModal>
 
