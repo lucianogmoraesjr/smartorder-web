@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { Order } from '../../@types/Order';
 import { api } from '../../services/api';
-import { Order } from '../../types/Order';
 import { OrderModal } from '../OrderModal';
 import { QuantityBadge } from '../QuantityBadge';
 

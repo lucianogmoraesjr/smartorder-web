@@ -1,4 +1,4 @@
-import { Order } from '../../types/Order';
+import { Order } from '../../@types/Order';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { Modal } from '../Modal';
 

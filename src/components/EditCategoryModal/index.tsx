@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Category } from '../../types/Category';
+import { Category } from '../../@types/Category';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Modal } from '../Modal';

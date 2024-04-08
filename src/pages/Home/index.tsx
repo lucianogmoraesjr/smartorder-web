@@ -12,6 +12,7 @@ export function Home() {
         subtitle="Acompanhe os pedidos dos clientes"
         icon={HomeIcon}
       />
+
       <Orders />
     </Container>
   );

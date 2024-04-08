@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import socketIO from 'socket.io-client';
 
+import { Order } from '../../@types/Order';
 import { api } from '../../services/api';
-import { Order } from '../../types/Order';
 import { OrdersBoard } from '../OrdersBoard';
 
 import { Container } from './styles';

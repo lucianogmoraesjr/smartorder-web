@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { Category } from '../../../@types/Category';
 import { Category as CategoryComponent } from '../../../components/Category';
 import { DeleteModal } from '../../../components/DeleteModal';
 import { EditCategoryModal } from '../../../components/EditCategoryModal';
@@ -9,7 +10,6 @@ import { NewCategoryModal } from '../../../components/NewCategoryModal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import { api } from '../../../services/api';
-import { Category } from '../../../types/Category';
 
 import { Container } from './styles';
 

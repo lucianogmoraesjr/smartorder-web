@@ -40,6 +40,7 @@ export function Modal({ isVisible, title, children, onClose }: ModalProps) {
               <CloseIcon />
             </button>
           </ModalHeader>
+
           {children}
         </ModalContainer>
       </Overlay>
