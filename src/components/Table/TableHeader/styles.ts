@@ -18,7 +18,7 @@ export const Header = styled.header`
     }
 
     span {
-      font-weight: 400;
+      font-weight: 500;
       font-size: 1rem;
     }
   }
