@@ -22,9 +22,9 @@ export function DeleteModal({
   confirmLabel,
   cancelLabel,
   isVisible,
+  children,
   onClose,
   onConfirm,
-  children,
 }: DeleteModalProps) {
   return (
     <Modal title={title} isVisible={isVisible} onClose={onClose}>
@@ -41,6 +41,7 @@ export function DeleteModal({
           <Button $variant="secondary" onClick={onClose}>
             {cancelLabel ? cancelLabel : 'Cancelar'}
           </Button>
+
           <Button onClick={onConfirm}>
             {confirmLabel ? confirmLabel : 'Excluir'}
           </Button>

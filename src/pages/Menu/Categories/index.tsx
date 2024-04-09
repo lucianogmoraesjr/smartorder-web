@@ -20,11 +20,11 @@ export function Categories() {
     {} as Category,
   );
 
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
-    useState(false);
   const [isNewCategoryModalVisible, setIsNewCategoryModalVisible] =
     useState(false);
+  const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
+    useState(false);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -32,8 +32,8 @@ export function Categories() {
         const categoriesList = await CategoriesService.listCategories();
 
         setCategories(categoriesList);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        toast.error('Ocorreu um erro ao carregar as categorias!');
       }
     }
 

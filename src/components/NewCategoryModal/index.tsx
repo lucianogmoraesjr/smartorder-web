@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Category } from '../../@types/Category';
-import { api } from '../../services/api';
+import CategoriesService from '../../services/CategoriesService';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Modal } from '../Modal';
@@ -27,14 +27,14 @@ export function NewCategoryModal({
     event.preventDefault();
 
     try {
-      const { data } = await api.post('categories', {
-        emoji,
+      const { data } = await CategoriesService.createCategory({
         name,
+        emoji,
       });
 
       onNewCategory(data);
       toast.success('Categoria cadastrada com sucesso.');
-    } catch (error) {
+    } catch {
       toast.error('Ocorreu um erro ao cadastrar a categoria.');
     } finally {
       setEmoji('');
