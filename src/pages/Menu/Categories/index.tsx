@@ -53,6 +53,16 @@ export function Categories() {
     setIsEditCategoryModalVisible(true);
   }
 
+  function handleUpdatedCategory(category: Category) {
+    setCategories(prevState => {
+      const filteredCategories = prevState.filter(
+        item => item.id !== category.id,
+      );
+
+      return filteredCategories.concat(category);
+    });
+  }
+
   const handleCloseEditCategoryModal = useCallback(() => {
     setIsEditCategoryModalVisible(false);
   }, []);
@@ -99,6 +109,7 @@ export function Categories() {
         category={selectedCategory}
         onClose={handleCloseEditCategoryModal}
         onDelete={handleDeleteCategory}
+        onUpdate={handleUpdatedCategory}
       />
 
       <DeleteModal
