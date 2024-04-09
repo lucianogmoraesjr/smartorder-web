@@ -48,12 +48,16 @@ export function Categories() {
     setIsNewCategoryModalVisible(false);
   }, []);
 
+  const handleNewCategory = useCallback((category: Category) => {
+    setCategories(prevState => prevState.concat(category));
+  }, []);
+
   function handleOpenEditCategoryModal(category: Category) {
-    setSelectedCategory(category);
     setIsEditCategoryModalVisible(true);
+    setSelectedCategory(category);
   }
 
-  function handleUpdatedCategory(category: Category) {
+  const handleUpdatedCategory = useCallback((category: Category) => {
     setCategories(prevState => {
       const filteredCategories = prevState.filter(
         item => item.id !== category.id,
@@ -61,7 +65,7 @@ export function Categories() {
 
       return filteredCategories.concat(category);
     });
-  }
+  }, []);
 
   const handleCloseEditCategoryModal = useCallback(() => {
     setIsEditCategoryModalVisible(false);
@@ -71,14 +75,19 @@ export function Categories() {
     setIsDeleteModalVisible(false);
   }, []);
 
-  function handleNewCategory(category: Category) {
-    setCategories(prevState => prevState.concat(category));
-  }
+  const handleDeleteCategory = useCallback(
+    (categoryId: string) => {
+      const category = categories.find(category => category.id === categoryId);
 
-  const handleDeleteCategory = useCallback((category: Category) => {
-    setIsDeleteModalVisible(true);
-    setSelectedCategory(category);
-  }, []);
+      if (!category) {
+        return;
+      }
+
+      setIsDeleteModalVisible(true);
+      setSelectedCategory(category);
+    },
+    [categories],
+  );
 
   async function handleConfirmDeleteCategory() {
     try {
@@ -98,19 +107,23 @@ export function Categories() {
 
   return (
     <Container>
-      <NewCategoryModal
-        isVisible={isNewCategoryModalVisible}
-        onClose={handleCloseNewCategoryModal}
-        onNewCategory={handleNewCategory}
-      />
+      {isNewCategoryModalVisible && (
+        <NewCategoryModal
+          isVisible={isNewCategoryModalVisible}
+          onClose={handleCloseNewCategoryModal}
+          onNewCategory={handleNewCategory}
+        />
+      )}
 
-      <EditCategoryModal
-        isVisible={isEditCategoryModalVisible}
-        category={selectedCategory}
-        onClose={handleCloseEditCategoryModal}
-        onDelete={handleDeleteCategory}
-        onUpdate={handleUpdatedCategory}
-      />
+      {isEditCategoryModalVisible && (
+        <EditCategoryModal
+          isVisible={isEditCategoryModalVisible}
+          categoryId={selectedCategory.id}
+          onClose={handleCloseEditCategoryModal}
+          onDelete={handleDeleteCategory}
+          onUpdate={handleUpdatedCategory}
+        />
+      )}
 
       <DeleteModal
         title="Excluir Categoria"
@@ -158,7 +171,7 @@ export function Categories() {
 
                   <button
                     type="button"
-                    onClick={() => handleDeleteCategory(category)}
+                    onClick={() => handleDeleteCategory(category.id)}
                   >
                     <TrashIcon />
                   </button>

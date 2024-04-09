@@ -19,6 +19,11 @@ class CategoriesService {
     return data;
   }
 
+  async getCategoryById(id: string) {
+    const { data } = await this.api.get<Category>(`categories/${id}`);
+    return data;
+  }
+
   createCategory(category: CreateCategoryBody) {
     return this.api.post<Category>('categories', category);
   }

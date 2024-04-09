@@ -1,54 +1,65 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { Category } from '../../@types/Category';
+import { Category, CategoryRequestBody } from '../../@types/Category';
+import { useSafeAsyncAction } from '../../hooks/useSafeAsyncAction';
 import CategoriesService from '../../services/CategoriesService';
 import { Button } from '../Button';
-import { Input } from '../Input';
+import { CategoryForm, CategoryFormRef } from '../CategoryForm';
 import { Modal } from '../Modal';
 
-import { EditCategoryForm } from './styles';
+import { FormActions } from './styles';
 
 interface EditCategoryModalProps {
   isVisible: boolean;
-  category: Category;
+  categoryId: string;
   onClose: () => void;
   onUpdate: (category: Category) => void;
-  onDelete: (category: Category) => void;
+  onDelete: (categoryId: string) => void;
 }
 
 export function EditCategoryModal({
   isVisible,
-  category,
+  categoryId,
   onClose,
   onUpdate,
   onDelete,
 }: EditCategoryModalProps) {
-  const [emoji, setEmoji] = useState('');
-  const [name, setName] = useState('');
+  const categoryFormRef = useRef<CategoryFormRef>(null);
+
+  const safeAsyncAction = useSafeAsyncAction();
 
   useEffect(() => {
-    if (!category) {
+    if (!categoryId) {
       return;
     }
 
-    setEmoji(category.emoji);
-    setName(category.name);
-  }, [category]);
+    async function getContact() {
+      try {
+        const category = await CategoriesService.getCategoryById(categoryId);
+
+        safeAsyncAction(() => {
+          categoryFormRef?.current?.setFieldsValues(category);
+        });
+      } catch {
+        toast.error('Categoria não encontrada!');
+      }
+    }
+
+    getContact();
+  }, [categoryId, safeAsyncAction]);
 
   function handleOpenDeleteModal() {
-    onDelete(category);
+    onDelete(categoryId);
     onClose();
   }
 
-  async function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-
+  async function handleSubmit(category: CategoryRequestBody) {
     try {
-      const { data } = await CategoriesService.updateCategory(category.id, {
-        name,
-        emoji,
-      });
+      const { data } = await CategoriesService.updateCategory(
+        categoryId,
+        category,
+      );
 
       onUpdate(data);
 
@@ -59,28 +70,10 @@ export function EditCategoryModal({
     }
   }
 
-  if (!category) {
-    return null;
-  }
-
   return (
     <Modal isVisible={isVisible} title="Editar Categoria" onClose={onClose}>
-      <EditCategoryForm onSubmit={handleSubmit}>
-        <Input
-          name="emoji"
-          label="Emoji"
-          value={emoji}
-          onChange={e => setEmoji(e.target.value)}
-        />
-
-        <Input
-          name="name"
-          label="Nome da categoria"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-
-        <div className="actions">
+      <CategoryForm onSubmit={handleSubmit} ref={categoryFormRef}>
+        <FormActions>
           <Button
             $variant="secondary"
             type="button"
@@ -90,8 +83,8 @@ export function EditCategoryModal({
           </Button>
 
           <Button type="submit">Salvar alterações</Button>
-        </div>
-      </EditCategoryForm>
+        </FormActions>
+      </CategoryForm>
     </Modal>
   );
 }

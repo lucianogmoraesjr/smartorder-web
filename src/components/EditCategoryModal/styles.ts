@@ -1,14 +1,8 @@
 import { styled } from 'styled-components';
 
-export const EditCategoryForm = styled.form`
-  margin-top: 3rem;
+export const FormActions = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-
-  .actions {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
+  align-items: center;
+  justify-content: space-between;
+  margin: 1rem;
 `;
