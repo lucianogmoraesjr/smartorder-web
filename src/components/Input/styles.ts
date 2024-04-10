@@ -1,4 +1,8 @@
-import { styled } from 'styled-components';
+import { css, styled } from 'styled-components';
+
+interface StyledInputProps {
+  $error?: string;
+}
 
 export const Container = styled.div`
   display: flex;
@@ -12,9 +16,10 @@ export const Container = styled.div`
   }
 `;
 
-export const StyledInput = styled.input`
+export const StyledInput = styled.input<StyledInputProps>`
   padding: 1rem;
   border: 1px solid ${({ theme }) => theme.colors.gray[200]};
+  outline: none;
   border-radius: 0.5rem;
   font-size: 0.875rem;
   line-height: 1.5;
@@ -24,4 +29,12 @@ export const StyledInput = styled.input`
     font-size: 0.875rem;
     line-height: 1.5;
   }
+
+  ${({ theme, $error }) =>
+    $error &&
+    css`
+      color: ${theme.colors.red.dark};
+      border-width: 2px;
+      border-color: ${theme.colors.red.main} !important;
+    `}
 `;

@@ -5,7 +5,7 @@ import { Category, CategoryRequestBody } from '../../@types/Category';
 import { useSafeAsyncAction } from '../../hooks/useSafeAsyncAction';
 import CategoriesService from '../../services/CategoriesService';
 import { Button } from '../Button';
-import { CategoryForm, CategoryFormRef } from '../CategoryForm';
+import { CategoryForm, CategoryFormHandle } from '../CategoryForm';
 import { Modal } from '../Modal';
 
 import { FormActions } from './styles';
@@ -25,7 +25,7 @@ export function EditCategoryModal({
   onUpdate,
   onDelete,
 }: EditCategoryModalProps) {
-  const categoryFormRef = useRef<CategoryFormRef>(null);
+  const categoryFormRef = useRef<CategoryFormHandle>(null);
 
   const safeAsyncAction = useSafeAsyncAction();
 
