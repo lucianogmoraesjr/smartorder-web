@@ -32,7 +32,7 @@ export function DeleteModal({
         {confirmText ? (
           <p>{confirmText}</p>
         ) : (
-          <p>'Tem certeza que deseja excluir?'</p>
+          <p>Tem certeza que deseja excluir?</p>
         )}
 
         {children}

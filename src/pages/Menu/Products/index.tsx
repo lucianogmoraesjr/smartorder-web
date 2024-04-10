@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Product } from '../../../@types/Product';
+import { DeleteModal } from '../../../components/DeleteModal';
 import PencilIcon from '../../../components/Icons/PencilIcon';
 import TrashIcon from '../../../components/Icons/TrashIcon';
 import { Table } from '../../../components/Table';
@@ -9,8 +10,15 @@ import { TableHeader } from '../../../components/Table/TableHeader';
 import ProductsService from '../../../services/ProductsService';
 import { formatCurrency } from '../../../utils/formatCurrency';
 
+import { DeleteProductContainer, ProductContainer } from './styles';
+
 export function Products() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product>(
+    {} as Product,
+  );
+
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -26,8 +34,63 @@ export function Products() {
     fetchProducts();
   }, []);
 
+  function handleOpenDeleteModal(product: Product) {
+    setSelectedProduct(product);
+    setIsDeleteModalVisible(true);
+  }
+
+  const handleCloseDeleteModal = useCallback(() => {
+    setIsDeleteModalVisible(false);
+  }, []);
+
+  const handleConfirmDeleteProduct = useCallback(async () => {
+    try {
+      await ProductsService.deleteProduct(selectedProduct.id);
+
+      setProducts(prevState =>
+        prevState.filter(product => product.id !== selectedProduct.id),
+      );
+
+      handleCloseDeleteModal();
+
+      toast.success('Produto deletado com sucesso!');
+    } catch (error) {
+      toast.error('Ocorreu um erro ao deletar o produto!');
+    }
+  }, [selectedProduct.id, handleCloseDeleteModal]);
+
   return (
     <>
+      <DeleteModal
+        isVisible={isDeleteModalVisible}
+        title="Excluir Produto"
+        confirmLabel="Excluir Produto"
+        confirmText="Tem certeza que deseja excluir o produto?"
+        cancelLabel="Manter Produto"
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleConfirmDeleteProduct}
+      >
+        <DeleteProductContainer>
+          <img
+            src={`http://localhost:3333/tmp/${selectedProduct.imagePath}`}
+            alt={`Imagem de ${selectedProduct.name}`}
+          />
+
+          <ProductContainer>
+            {selectedProduct.category && (
+              <div>
+                <span>{selectedProduct.category.emoji}</span>
+                <span>{selectedProduct.category.name}</span>
+              </div>
+            )}
+
+            <strong>{selectedProduct.name}</strong>
+
+            <span>{formatCurrency(selectedProduct.priceInCents / 100)}</span>
+          </ProductContainer>
+        </DeleteProductContainer>
+      </DeleteModal>
+
       <TableHeader title="Produtos" length={products.length}>
         <button type="button">Novo produto</button>
       </TableHeader>
@@ -66,7 +129,10 @@ export function Products() {
                     <PencilIcon />
                   </a>
 
-                  <button type="button">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenDeleteModal(product)}
+                  >
                     <TrashIcon />
                   </button>
                 </div>

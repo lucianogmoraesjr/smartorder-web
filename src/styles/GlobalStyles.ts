@@ -75,13 +75,13 @@ export const GlobalStyles = createGlobalStyle`
   }
 
   body {
-    background: #fafafa;
-    color: #333;
+    background: ${({ theme }) => theme.colors.background};
+    color: ${({ theme }) => theme.colors.gray[500]};
   }
 
   button {
     cursor: pointer;
     font-size: 1rem;
-    color: #333;
+    color: ${({ theme }) => theme.colors.gray[500]};
   }
 `;

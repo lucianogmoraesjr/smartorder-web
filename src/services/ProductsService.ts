@@ -15,6 +15,10 @@ class ProductsService {
     const { data } = await this.api.get<Product[]>('products');
     return data;
   }
+
+  deleteProduct(id: string) {
+    return this.api.delete(`products/${id}`);
+  }
 }
 
 export default new ProductsService();
