@@ -72,14 +72,14 @@ export const CategoryForm = forwardRef<CategoryFormHandle, CategoryFormProps>(
       });
 
       if (!result.success) {
-        result.error.errors.forEach(error => {
-          setError({
-            field: String(error.path[0]),
-            message: error.message,
-          });
-        });
+        const error = result.error;
 
-        return;
+        for (const issue of error.issues) {
+          setError({
+            field: issue.path[0].toString(),
+            message: issue.message,
+          });
+        }
       } else {
         onSubmit(result.data);
       }
