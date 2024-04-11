@@ -15,9 +15,11 @@ export const Overlay = styled.div`
 
 export const ModalContainer = styled.div`
   background: #fff;
-  width: 30rem;
+  min-width: 30rem;
+  max-height: 985px;
   border-radius: 0.5rem;
   padding: 2rem;
+  overflow-y: auto;
 `;
 
 export const ModalHeader = styled.header`

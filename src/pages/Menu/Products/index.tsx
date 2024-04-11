@@ -5,6 +5,7 @@ import { Product } from '../../../@types/Product';
 import { DeleteModal } from '../../../components/DeleteModal';
 import PencilIcon from '../../../components/Icons/PencilIcon';
 import TrashIcon from '../../../components/Icons/TrashIcon';
+import { NewProductModal } from '../../../components/NewProductModal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
 import ProductsService from '../../../services/ProductsService';
@@ -61,6 +62,8 @@ export function Products() {
 
   return (
     <>
+      <NewProductModal isVisible={true} onClose={() => {}} />
+
       <DeleteModal
         isVisible={isDeleteModalVisible}
         title="Excluir Produto"

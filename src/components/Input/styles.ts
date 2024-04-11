@@ -14,6 +14,10 @@ export const Container = styled.div`
     line-height: 1.5;
     color: ${({ theme }) => theme.colors.gray[500]};
   }
+
+  .input-legend {
+    color: ${({ theme }) => theme.colors.gray[400]};
+  }
 `;
 
 export const StyledInput = styled.input<StyledInputProps>`
