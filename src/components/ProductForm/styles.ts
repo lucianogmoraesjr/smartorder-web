@@ -17,6 +17,20 @@ export const ProductWrapper = styled.div`
   width: 26rem;
   flex-direction: column;
   gap: 2rem;
+
+  & .input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    & div:first-child {
+      flex: 1;
+    }
+
+    & div:last-child {
+      width: 120px;
+    }
+  }
 `;
 
 export const ImageInputWrapper = styled.div`
@@ -44,27 +58,7 @@ export const ImageInputWrapper = styled.div`
 
       cursor: pointer;
     }
-
-    input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border-width: 0;
-    }
   }
-`;
-
-export const ImagePreviewContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 10rem;
-  background: ${({ theme }) => theme.colors.gray[100]};
 `;
 
 export const CategoryWrapper = styled.div`
@@ -86,6 +80,16 @@ export const CategoriesList = styled.div`
   justify-items: stretch;
   column-gap: 0.75rem;
   row-gap: 1rem;
+
+  > button {
+    all: unset;
+    cursor: pointer;
+
+    &.selected {
+      outline: 1px solid ${({ theme }) => theme.colors.red.main};
+      border-radius: 999px;
+    }
+  }
 `;
 
 export const IngredientWrapper = styled.div`

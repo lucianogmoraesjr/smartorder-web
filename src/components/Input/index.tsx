@@ -13,7 +13,7 @@ export function Input({ name, label, error, legend, ...rest }: InputProps) {
   return (
     <Container>
       <label htmlFor={name}>{label}</label>
-      <StyledInput id={name} $error={error} {...rest} />
+      <StyledInput id={name} name={name} $error={error} {...rest} />
       {legend && (
         <label htmlFor={name} className="input-legend">
           {legend}

@@ -1,14 +1,14 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Category } from '../../@types/Category';
 import { Ingredient } from '../../@types/Ingredient';
-import imagePlaceholder from '../../assets/images/image-placeholder.svg';
 import CategoriesService from '../../services/CategoriesService';
 import IngredientsService from '../../services/IngredientsService';
 import { Button } from '../Button';
 import { Category as CategoryComponent } from '../Category';
 import ImageIcon from '../Icons/ImageIcon';
+import { ImagePicker } from '../ImagePicker';
 import { IngredientCheckbox } from '../IngredientCheckbox';
 import { Input } from '../Input';
 
@@ -18,7 +18,6 @@ import {
   Container,
   Form,
   ImageInputWrapper,
-  ImagePreviewContainer,
   IngredientWrapper,
   IngredientsList,
   ProductWrapper,
@@ -29,9 +28,20 @@ interface ProductFormProps {
   onSubmit: () => void;
 }
 
+interface SelectedIngredients {
+  ingredientId: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ProductForm({ onSubmit, children }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null,
+  );
+  const [selectedIngredientIds, setSelectedIngredientIds] = useState<
+    SelectedIngredients[]
+  >([]);
 
   useEffect(() => {
     async function fetchCategories() {
@@ -61,32 +71,73 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
     fetchIngredients();
   }, []);
 
+  function handleSelectCategory(categoryId: string) {
+    if (selectedCategoryId === categoryId) {
+      return;
+    }
+
+    setSelectedCategoryId(categoryId);
+  }
+
+  function handleSelectIngredients(event: ChangeEvent<HTMLInputElement>) {
+    const isChecked = event.target.checked;
+    const { value } = event.target;
+
+    if (isChecked) {
+      setSelectedIngredientIds(prevState =>
+        prevState.concat({
+          ingredientId: value,
+        }),
+      );
+    }
+
+    if (!isChecked) {
+      setSelectedIngredientIds(prevState =>
+        prevState.filter(({ ingredientId }) => ingredientId !== value),
+      );
+    }
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const formData = new FormData(event.currentTarget);
+
+    if (!selectedCategoryId) {
+      return;
+    }
+
+    formData.set('categoryId', selectedCategoryId);
+
+    console.log('formData', formData.get('categoryId'));
+  }
+
   return (
-    <Form onSubmit={onSubmit}>
+    <Form onSubmit={handleSubmit}>
       <Container>
         <ProductWrapper>
           <ImageInputWrapper>
             <strong>Imagem</strong>
 
             <div>
-              <ImagePreviewContainer>
-                <img src={imagePlaceholder} alt="" />
-              </ImagePreviewContainer>
+              <ImagePicker />
 
               <label htmlFor="image">
                 <ImageIcon />
                 Selecionar Imagem
               </label>
-
-              <input type="file" name="image" id="image" accept="image/*" />
             </div>
           </ImageInputWrapper>
 
-          <Input
-            label="Nome do produto"
-            name="name"
-            placeholder="Quatro Queijos"
-          />
+          <div className="input-wrapper">
+            <Input
+              label="Nome do produto"
+              name="name"
+              placeholder="Quatro Queijos"
+            />
+
+            <Input label="Preço" name="price" placeholder="R$ 35,00" />
+          </div>
 
           <Input
             label="Descrição"
@@ -100,11 +151,19 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
 
             <CategoriesList>
               {categories.map(category => (
-                <CategoryComponent
+                <button
+                  type="button"
                   key={category.id}
-                  emoji={category.emoji}
-                  name={category.name}
-                />
+                  onClick={() => handleSelectCategory(category.id)}
+                  className={
+                    selectedCategoryId === category.id ? 'selected' : ''
+                  }
+                >
+                  <CategoryComponent
+                    emoji={category.emoji}
+                    name={category.name}
+                  />
+                </button>
               ))}
             </CategoriesList>
           </CategoryWrapper>
@@ -130,6 +189,7 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
                 id={ingredient.name}
                 name={ingredient.name}
                 ingredient={ingredient}
+                onChange={handleSelectIngredients}
               />
             ))}
           </IngredientsList>
