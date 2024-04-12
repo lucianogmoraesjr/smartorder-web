@@ -65,6 +65,7 @@ export const CategoryWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-width: 100%;
 
   strong {
     font-size: 0.875rem;
@@ -75,14 +76,14 @@ export const CategoryWrapper = styled.div`
 `;
 
 export const CategoriesList = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  justify-items: stretch;
-  column-gap: 0.75rem;
-  row-gap: 1rem;
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 
   > button {
     all: unset;
+    flex: 1;
     cursor: pointer;
 
     &.selected {
@@ -120,6 +121,6 @@ export const IngredientsList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
-  height: 26.875rem;
+  max-height: 476px;
   overflow-y: auto;
 `;

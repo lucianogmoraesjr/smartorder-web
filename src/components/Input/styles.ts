@@ -34,6 +34,16 @@ export const StyledInput = styled.input<StyledInputProps>`
     line-height: 1.5;
   }
 
+  &[type='number'] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+  }
+
   ${({ theme, $error }) =>
     $error &&
     css`

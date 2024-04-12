@@ -107,7 +107,7 @@ export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
 
               <div className="product-details">
                 <strong>{product.name}</strong>
-                <span>{formatCurrency(product.priceInCents / 100)}</span>
+                <span>{formatCurrency(product.priceInCents)}</span>
               </div>
             </div>
           ))}

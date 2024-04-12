@@ -8,3 +8,14 @@ export interface Product {
     emoji: string;
   };
 }
+
+export interface CreateProductRequest {
+  name: string;
+  description: string;
+  priceInCents: number;
+  imagePath: string;
+  categoryId: string;
+  ingredients?: Array<{
+    ingredientId: string;
+  }>;
+}

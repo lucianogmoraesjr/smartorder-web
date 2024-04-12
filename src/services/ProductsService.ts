@@ -13,6 +13,13 @@ class ProductsService {
 
   async listProducts() {
     const { data } = await this.api.get<Product[]>('products');
+
+    return data;
+  }
+
+  async createProduct(formData: FormData) {
+    const { data } = await this.api.post<Product>('products', formData);
+
     return data;
   }
 

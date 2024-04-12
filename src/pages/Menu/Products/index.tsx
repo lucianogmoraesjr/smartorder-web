@@ -20,6 +20,8 @@ export function Products() {
   );
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [isNewProductModalVisible, setIsNewProductModalVisible] =
+    useState(false);
 
   useEffect(() => {
     async function fetchProducts() {
@@ -33,6 +35,18 @@ export function Products() {
     }
 
     fetchProducts();
+  }, []);
+
+  function handleOpenNewProductModal() {
+    setIsNewProductModalVisible(true);
+  }
+
+  const handleCloseNewProductModal = useCallback(() => {
+    setIsNewProductModalVisible(false);
+  }, []);
+
+  const handleNewProduct = useCallback((product: Product) => {
+    setProducts(prevState => prevState.concat(product));
   }, []);
 
   function handleOpenDeleteModal(product: Product) {
@@ -62,7 +76,13 @@ export function Products() {
 
   return (
     <>
-      <NewProductModal isVisible={true} onClose={() => {}} />
+      {isNewProductModalVisible && (
+        <NewProductModal
+          isVisible={isNewProductModalVisible}
+          onClose={handleCloseNewProductModal}
+          onNewProduct={handleNewProduct}
+        />
+      )}
 
       <DeleteModal
         isVisible={isDeleteModalVisible}
@@ -89,13 +109,15 @@ export function Products() {
 
             <strong>{selectedProduct.name}</strong>
 
-            <span>{formatCurrency(selectedProduct.priceInCents / 100)}</span>
+            <span>{formatCurrency(selectedProduct.priceInCents)}</span>
           </ProductContainer>
         </DeleteProductContainer>
       </DeleteModal>
 
       <TableHeader title="Produtos" length={products.length}>
-        <button type="button">Novo produto</button>
+        <button type="button" onClick={handleOpenNewProductModal}>
+          Novo produto
+        </button>
       </TableHeader>
 
       <Table>
@@ -124,7 +146,7 @@ export function Products() {
                   ? `${product.category.emoji} ${product.category.name}`
                   : ''}
               </td>
-              <td>{formatCurrency(product.priceInCents / 100)}</td>
+              <td>{formatCurrency(product.priceInCents)}</td>
 
               <td>
                 <div className="actions">

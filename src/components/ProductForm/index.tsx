@@ -5,6 +5,7 @@ import { Category } from '../../@types/Category';
 import { Ingredient } from '../../@types/Ingredient';
 import CategoriesService from '../../services/CategoriesService';
 import IngredientsService from '../../services/IngredientsService';
+import { formatCurrency } from '../../utils/formatCurrency';
 import { Button } from '../Button';
 import { Category as CategoryComponent } from '../Category';
 import ImageIcon from '../Icons/ImageIcon';
@@ -25,17 +26,17 @@ import {
 
 interface ProductFormProps {
   children: ReactNode;
-  onSubmit: () => void;
+  onSubmit: (data: FormData) => Promise<void>;
 }
 
 interface SelectedIngredients {
   ingredientId: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ProductForm({ onSubmit, children }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [priceInCents, setPriceInCents] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null,
   );
@@ -98,6 +99,14 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
     }
   }
 
+  function handlePriceChange(event: ChangeEvent<HTMLInputElement>) {
+    const { value } = event.target;
+
+    const normalizeValue = parseFloat(value.replace(/[^\d]/g, ''));
+
+    setPriceInCents(normalizeValue.toString());
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -108,8 +117,9 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
     }
 
     formData.set('categoryId', selectedCategoryId);
+    formData.set('ingredients', JSON.stringify(selectedIngredientIds));
 
-    console.log('formData', formData.get('categoryId'));
+    onSubmit(formData);
   }
 
   return (
@@ -136,7 +146,13 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
               placeholder="Quatro Queijos"
             />
 
-            <Input label="Preço" name="price" placeholder="R$ 35,00" />
+            <Input
+              label="Preço"
+              name="priceInCents"
+              placeholder="R$ 35,00"
+              value={priceInCents ? formatCurrency(Number(priceInCents)) : ''}
+              onChange={handlePriceChange}
+            />
           </div>
 
           <Input

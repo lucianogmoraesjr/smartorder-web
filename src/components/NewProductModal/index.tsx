@@ -1,3 +1,7 @@
+import { toast } from 'react-toastify';
+
+import { Product } from '../../@types/Product';
+import ProductsService from '../../services/ProductsService';
 import { Modal } from '../Modal';
 import { SubmitButton } from '../NewCategoryModal/styles';
 import { ProductForm } from '../ProductForm';
@@ -5,11 +9,25 @@ import { ProductForm } from '../ProductForm';
 interface NewProductModalProps {
   isVisible: boolean;
   onClose: () => void;
+  onNewProduct: (product: Product) => void;
 }
 
-export function NewProductModal({ isVisible, onClose }: NewProductModalProps) {
-  async function handleSubmit() {
-    //
+export function NewProductModal({
+  isVisible,
+  onClose,
+  onNewProduct,
+}: NewProductModalProps) {
+  async function handleSubmit(data: FormData) {
+    try {
+      const product = await ProductsService.createProduct(data);
+
+      onNewProduct(product);
+      toast.success('Produto cadastrado com sucesso!');
+    } catch {
+      toast.error('Ocorreu um erro ao cadastrar o produto!');
+    } finally {
+      onClose();
+    }
   }
 
   return (
