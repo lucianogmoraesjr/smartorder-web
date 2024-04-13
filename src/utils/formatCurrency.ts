@@ -1,6 +1,4 @@
 export function formatCurrency(valueInCents: number | null) {
-  console.log(valueInCents);
-
   if (valueInCents === null || isNaN(valueInCents)) {
     return '';
   }

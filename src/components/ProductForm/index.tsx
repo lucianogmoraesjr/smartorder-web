@@ -1,4 +1,11 @@
-import { ChangeEvent, FormEvent, ReactNode, useEffect, useState } from 'react';
+import {
+  ChangeEvent,
+  FormEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { toast } from 'react-toastify';
 
 import { Category } from '../../@types/Category';
@@ -37,12 +44,21 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [priceInCents, setPriceInCents] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
     null,
   );
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<
     SelectedIngredients[]
   >([]);
+
+  const filteredIngredients = useMemo(
+    () =>
+      ingredients.filter(ingredient =>
+        ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()),
+      ),
+    [searchTerm, ingredients],
+  );
 
   useEffect(() => {
     async function fetchCategories() {
@@ -107,6 +123,10 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
     setPriceInCents(normalizeValue.toString());
   }
 
+  function handleSearchTermChange(event: ChangeEvent<HTMLInputElement>) {
+    setSearchTerm(event.target.value);
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -118,6 +138,7 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
 
     formData.set('categoryId', selectedCategoryId);
     formData.set('ingredients', JSON.stringify(selectedIngredientIds));
+    formData.set('priceInCents', priceInCents);
 
     onSubmit(formData);
   }
@@ -195,11 +216,13 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
           <Input
             label="Busque o ingrediente"
             name="search"
+            value={searchTerm}
+            onChange={handleSearchTermChange}
             placeholder="Ex: Quatro Queijos"
           />
 
           <IngredientsList>
-            {ingredients.map(ingredient => (
+            {filteredIngredients.map(ingredient => (
               <IngredientCheckbox
                 key={ingredient.id}
                 id={ingredient.name}
