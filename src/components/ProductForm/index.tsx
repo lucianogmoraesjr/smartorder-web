@@ -2,6 +2,7 @@ import {
   ChangeEvent,
   FormEvent,
   ReactNode,
+  useCallback,
   useEffect,
   useMemo,
   useState,
@@ -19,6 +20,7 @@ import ImageIcon from '../Icons/ImageIcon';
 import { ImagePicker } from '../ImagePicker';
 import { IngredientCheckbox } from '../IngredientCheckbox';
 import { Input } from '../Input';
+import { NewIngredientModal } from '../NewIngredientModal';
 
 import {
   CategoriesList,
@@ -51,6 +53,9 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<
     SelectedIngredients[]
   >([]);
+
+  const [isNewIngredientModalOpen, setIsNewIngredientModalOpen] =
+    useState(false);
 
   const filteredIngredients = useMemo(
     () =>
@@ -127,6 +132,18 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
     setSearchTerm(event.target.value);
   }
 
+  function handleOpenNewIngredientModal() {
+    setIsNewIngredientModalOpen(true);
+  }
+
+  const handleCloseNewIngredientModal = useCallback(() => {
+    setIsNewIngredientModalOpen(false);
+  }, []);
+
+  const handleNewIngredient = useCallback((ingredient: Ingredient) => {
+    setIngredients(prevState => prevState.concat(ingredient));
+  }, []);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -144,98 +161,111 @@ export function ProductForm({ onSubmit, children }: ProductFormProps) {
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <Container>
-        <ProductWrapper>
-          <ImageInputWrapper>
-            <strong>Imagem</strong>
+    <>
+      <NewIngredientModal
+        isVisible={isNewIngredientModalOpen}
+        onClose={handleCloseNewIngredientModal}
+        onNewIngredient={handleNewIngredient}
+      />
 
-            <div>
-              <ImagePicker />
+      <Form onSubmit={handleSubmit}>
+        <Container>
+          <ProductWrapper>
+            <ImageInputWrapper>
+              <strong>Imagem</strong>
 
-              <label htmlFor="image">
-                <ImageIcon />
-                Selecionar Imagem
-              </label>
-            </div>
-          </ImageInputWrapper>
+              <div>
+                <ImagePicker />
 
-          <div className="input-wrapper">
-            <Input
-              label="Nome do produto"
-              name="name"
-              placeholder="Quatro Queijos"
-            />
+                <label htmlFor="image">
+                  <ImageIcon />
+                  Selecionar Imagem
+                </label>
+              </div>
+            </ImageInputWrapper>
 
-            <Input
-              label="Preço"
-              name="priceInCents"
-              placeholder="R$ 35,00"
-              value={priceInCents ? formatCurrency(Number(priceInCents)) : ''}
-              onChange={handlePriceChange}
-            />
-          </div>
-
-          <Input
-            label="Descrição"
-            name="description"
-            legend="Máximo 110 caracteres"
-            placeholder="Pizza de Quatro Queijos com borda tradicional"
-          />
-
-          <CategoryWrapper>
-            <strong>Categoria</strong>
-
-            <CategoriesList>
-              {categories.map(category => (
-                <button
-                  type="button"
-                  key={category.id}
-                  onClick={() => handleSelectCategory(category.id)}
-                  className={
-                    selectedCategoryId === category.id ? 'selected' : ''
-                  }
-                >
-                  <CategoryComponent
-                    emoji={category.emoji}
-                    name={category.name}
-                  />
-                </button>
-              ))}
-            </CategoriesList>
-          </CategoryWrapper>
-        </ProductWrapper>
-
-        <IngredientWrapper>
-          <div className="ingredients-header">
-            <strong>Ingredientes</strong>
-
-            <Button $variant="secondary">Novo ingrediente</Button>
-          </div>
-
-          <Input
-            label="Busque o ingrediente"
-            name="search"
-            value={searchTerm}
-            onChange={handleSearchTermChange}
-            placeholder="Ex: Quatro Queijos"
-          />
-
-          <IngredientsList>
-            {filteredIngredients.map(ingredient => (
-              <IngredientCheckbox
-                key={ingredient.id}
-                id={ingredient.name}
-                name={ingredient.name}
-                ingredient={ingredient}
-                onChange={handleSelectIngredients}
+            <div className="input-wrapper">
+              <Input
+                label="Nome do produto"
+                name="name"
+                placeholder="Quatro Queijos"
               />
-            ))}
-          </IngredientsList>
-        </IngredientWrapper>
-      </Container>
 
-      {children}
-    </Form>
+              <Input
+                label="Preço"
+                name="priceInCents"
+                placeholder="R$ 35,00"
+                value={priceInCents ? formatCurrency(Number(priceInCents)) : ''}
+                onChange={handlePriceChange}
+              />
+            </div>
+
+            <Input
+              label="Descrição"
+              name="description"
+              legend="Máximo 110 caracteres"
+              placeholder="Pizza de Quatro Queijos com borda tradicional"
+            />
+
+            <CategoryWrapper>
+              <strong>Categoria</strong>
+
+              <CategoriesList>
+                {categories.map(category => (
+                  <button
+                    type="button"
+                    key={category.id}
+                    onClick={() => handleSelectCategory(category.id)}
+                    className={
+                      selectedCategoryId === category.id ? 'selected' : ''
+                    }
+                  >
+                    <CategoryComponent
+                      emoji={category.emoji}
+                      name={category.name}
+                    />
+                  </button>
+                ))}
+              </CategoriesList>
+            </CategoryWrapper>
+          </ProductWrapper>
+
+          <IngredientWrapper>
+            <div className="ingredients-header">
+              <strong>Ingredientes</strong>
+
+              <Button
+                $variant="secondary"
+                onClick={handleOpenNewIngredientModal}
+              >
+                Novo ingrediente
+              </Button>
+            </div>
+
+            <Input
+              label="Busque o ingrediente"
+              name="search"
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+              placeholder="Ex: Quatro Queijos"
+            />
+
+            <IngredientsList>
+              {filteredIngredients.map(ingredient => (
+                <IngredientCheckbox
+                  key={ingredient.id}
+                  id={ingredient.name}
+                  name={ingredient.name}
+                  ingredient={ingredient}
+                  onChange={handleSelectIngredients}
+                />
+              ))}
+            </IngredientsList>
+          </IngredientWrapper>
+        </Container>
+
+        {children}
+      </Form>
+    </>
   );
 }

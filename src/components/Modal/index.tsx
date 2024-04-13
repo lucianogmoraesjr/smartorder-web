@@ -9,10 +9,19 @@ interface ModalProps {
   isVisible: boolean;
   title: string;
   children: ReactNode;
+  containerId?: string;
+  overlay?: 'normal' | 'light';
   onClose: () => void;
 }
 
-export function Modal({ isVisible, title, children, onClose }: ModalProps) {
+export function Modal({
+  isVisible,
+  title,
+  children,
+  containerId = 'modal-root',
+  overlay = 'normal',
+  onClose,
+}: ModalProps) {
   useEffect(() => {
     function closeModalOnPressEsc(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -30,8 +39,8 @@ export function Modal({ isVisible, title, children, onClose }: ModalProps) {
   }
 
   return (
-    <ReactPortal containerId="modal-root">
-      <Overlay onClick={onClose}>
+    <ReactPortal containerId={containerId}>
+      <Overlay onClick={onClose} $overlay={overlay}>
         <ModalContainer onClick={e => e.stopPropagation()}>
           <ModalHeader>
             <strong>{title}</strong>

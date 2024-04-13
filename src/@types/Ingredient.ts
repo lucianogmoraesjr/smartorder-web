@@ -3,3 +3,5 @@ export interface Ingredient {
   name: string;
   emoji: string;
 }
+
+export type CreateIngredientRequest = Omit<Ingredient, 'id'>;
