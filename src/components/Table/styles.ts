@@ -63,12 +63,6 @@ export const ProductsTable = styled.table`
         height: 1.5rem;
       }
 
-      a {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
       button {
         all: unset;
         display: flex;

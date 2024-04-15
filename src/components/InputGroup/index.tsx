@@ -2,12 +2,12 @@ import { ReactNode } from 'react';
 
 import { Container } from './styles';
 
-interface FormGroupProps {
+interface InputGroupProps {
   children: ReactNode;
   error?: string;
 }
 
-export function FormGroup({ children, error }: FormGroupProps) {
+export function InputGroup({ children, error }: InputGroupProps) {
   return (
     <Container>
       <div className="form-item">{children}</div>

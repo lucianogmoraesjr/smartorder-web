@@ -27,7 +27,7 @@ export const ProductWrapper = styled.div`
       flex: 1;
     }
 
-    & div:last-child {
+    & div:last-child .form-item {
       width: 120px;
     }
   }

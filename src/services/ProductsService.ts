@@ -17,6 +17,12 @@ class ProductsService {
     return data;
   }
 
+  async getProductById(id: string) {
+    const { data } = await this.api.get(`products/${id}`);
+
+    return data;
+  }
+
   async createProduct(formData: FormData) {
     const { data } = await this.api.post<Product>('products', formData);
 

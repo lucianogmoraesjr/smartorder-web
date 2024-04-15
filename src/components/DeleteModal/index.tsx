@@ -38,7 +38,7 @@ export function DeleteModal({
         {children}
 
         <Actions>
-          <Button $variant="secondary" onClick={onClose}>
+          <Button type="button" $variant="secondary" onClick={onClose}>
             {cancelLabel ? cancelLabel : 'Cancelar'}
           </Button>
 

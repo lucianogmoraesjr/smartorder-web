@@ -6,8 +6,8 @@ import { Ingredient } from '../../@types/Ingredient';
 import { useErrors } from '../../hooks/useErrors';
 import IngredientsService from '../../services/IngredientsService';
 import { Button } from '../Button';
-import { FormGroup } from '../FormGroup';
 import { Input } from '../Input';
+import { InputGroup } from '../InputGroup';
 import { Modal } from '../Modal';
 
 import { IngredientForm } from './styles';
@@ -95,7 +95,7 @@ export function NewIngredientModal({
     >
       <IngredientForm onSubmit={handleSubmit}>
         <div>
-          <FormGroup error={getErrorMessageByFieldName('emoji')}>
+          <InputGroup error={getErrorMessageByFieldName('emoji')}>
             <Input
               label="Emoji"
               name="emoji"
@@ -104,9 +104,9 @@ export function NewIngredientModal({
               value={emoji}
               error={getErrorMessageByFieldName('emoji')}
             />
-          </FormGroup>
+          </InputGroup>
 
-          <FormGroup error={getErrorMessageByFieldName('name')}>
+          <InputGroup error={getErrorMessageByFieldName('name')}>
             <Input
               label="Nome do Ingredient"
               name="name"
@@ -115,7 +115,7 @@ export function NewIngredientModal({
               value={name}
               error={getErrorMessageByFieldName('name')}
             />
-          </FormGroup>
+          </InputGroup>
         </div>
 
         <Button>Salvar Alterações</Button>

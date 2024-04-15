@@ -3,8 +3,9 @@ import { toast } from 'react-toastify';
 import { Product } from '../../@types/Product';
 import ProductsService from '../../services/ProductsService';
 import { Modal } from '../Modal';
-import { SubmitButton } from '../NewCategoryModal/styles';
 import { ProductForm } from '../ProductForm';
+
+import { SubmitButton } from './styles';
 
 interface NewProductModalProps {
   isVisible: boolean;

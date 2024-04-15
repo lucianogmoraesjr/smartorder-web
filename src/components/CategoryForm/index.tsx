@@ -10,8 +10,8 @@ import { z } from 'zod';
 
 import { Category, CategoryRequestBody } from '../../@types/Category';
 import { useErrors } from '../../hooks/useErrors';
-import { FormGroup } from '../FormGroup';
 import { Input } from '../Input';
+import { InputGroup } from '../InputGroup';
 
 import { Form } from './styles';
 
@@ -23,6 +23,15 @@ interface CategoryFormProps {
 export interface CategoryFormHandle {
   setFieldsValues: (category: Category) => void;
 }
+
+const categoryFormSchema = z.object({
+  emoji: z
+    .string()
+    .trim()
+    .min(1, 'Emoji é obrigatório')
+    .emoji('Emoji inválido'),
+  name: z.string().trim().min(1, 'Nome é obrigatório'),
+});
 
 export const CategoryForm = forwardRef<CategoryFormHandle, CategoryFormProps>(
   ({ children, onSubmit }, ref) => {
@@ -37,15 +46,6 @@ export const CategoryForm = forwardRef<CategoryFormHandle, CategoryFormProps>(
     }));
 
     const { setError, removeError, getErrorMessageByFieldName } = useErrors();
-
-    const categoryFormSchema = z.object({
-      emoji: z
-        .string()
-        .trim()
-        .min(1, 'Emoji é obrigatório')
-        .emoji('Emoji inválido'),
-      name: z.string().trim().min(1, 'Nome é obrigatório'),
-    });
 
     function handleEmojiChange(event: ChangeEvent<HTMLInputElement>) {
       if (event.target.value) {
@@ -87,7 +87,7 @@ export const CategoryForm = forwardRef<CategoryFormHandle, CategoryFormProps>(
 
     return (
       <Form onSubmit={handleSubmit}>
-        <FormGroup error={getErrorMessageByFieldName('emoji')}>
+        <InputGroup error={getErrorMessageByFieldName('emoji')}>
           <Input
             name="emoji"
             label="Emoji"
@@ -96,9 +96,9 @@ export const CategoryForm = forwardRef<CategoryFormHandle, CategoryFormProps>(
             error={getErrorMessageByFieldName('emoji')}
             placeholder="Ex: 🍕"
           />
-        </FormGroup>
+        </InputGroup>
 
-        <FormGroup error={getErrorMessageByFieldName('name')}>
+        <InputGroup error={getErrorMessageByFieldName('name')}>
           <Input
             name="name"
             label="Nome da categoria"
@@ -107,7 +107,7 @@ export const CategoryForm = forwardRef<CategoryFormHandle, CategoryFormProps>(
             error={getErrorMessageByFieldName('name')}
             placeholder="Ex: Lanches"
           />
-        </FormGroup>
+        </InputGroup>
 
         {children}
       </Form>

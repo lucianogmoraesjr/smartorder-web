@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 
 import { Product } from '../../../@types/Product';
 import { DeleteModal } from '../../../components/DeleteModal';
+import { EditProductModal } from '../../../components/EditProductModal';
 import PencilIcon from '../../../components/Icons/PencilIcon';
 import TrashIcon from '../../../components/Icons/TrashIcon';
 import { NewProductModal } from '../../../components/NewProductModal';
@@ -21,6 +22,8 @@ export function Products() {
 
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
   const [isNewProductModalVisible, setIsNewProductModalVisible] =
+    useState(false);
+  const [isEditProductModalVisible, setIsEditProductModalVisible] =
     useState(false);
 
   useEffect(() => {
@@ -47,6 +50,15 @@ export function Products() {
 
   const handleNewProduct = useCallback((product: Product) => {
     setProducts(prevState => prevState.concat(product));
+  }, []);
+
+  function handleOpenEditModal(product: Product) {
+    setIsEditProductModalVisible(true);
+    setSelectedProduct(product);
+  }
+
+  const handleCloseEditModal = useCallback(() => {
+    setIsEditProductModalVisible(false);
   }, []);
 
   function handleOpenDeleteModal(product: Product) {
@@ -81,6 +93,14 @@ export function Products() {
           isVisible={isNewProductModalVisible}
           onClose={handleCloseNewProductModal}
           onNewProduct={handleNewProduct}
+        />
+      )}
+
+      {isEditProductModalVisible && (
+        <EditProductModal
+          isVisible={isEditProductModalVisible}
+          productId={selectedProduct.id}
+          onClose={handleCloseEditModal}
         />
       )}
 
@@ -150,9 +170,12 @@ export function Products() {
 
               <td>
                 <div className="actions">
-                  <a href="/">
+                  <button
+                    type="button"
+                    onClick={() => handleOpenEditModal(product)}
+                  >
                     <PencilIcon />
-                  </a>
+                  </button>
 
                   <button
                     type="button"

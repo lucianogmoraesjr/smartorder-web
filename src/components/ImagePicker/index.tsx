@@ -4,7 +4,11 @@ import imagePlaceholder from '../../assets/images/image-placeholder.svg';
 
 import { Container, ImagePreviewContainer } from './styles';
 
-export function ImagePicker() {
+interface ImagePickerProps {
+  imagePath?: string;
+}
+
+export function ImagePicker({ imagePath }: ImagePickerProps) {
   const [preview, setPreview] = useState<string | null>(null);
 
   function handleFileSelected(event: ChangeEvent<HTMLInputElement>) {
@@ -22,7 +26,13 @@ export function ImagePicker() {
   return (
     <Container>
       <ImagePreviewContainer>
-        {preview ? (
+        {imagePath ? (
+          <img
+            src={`http://localhost:3333/tmp/${imagePath}`}
+            alt=""
+            className="preview"
+          />
+        ) : preview ? (
           <img src={preview} alt="" className="preview" />
         ) : (
           <img src={imagePlaceholder} alt="" />
