@@ -57,6 +57,17 @@ export function Products() {
     setSelectedProduct(product);
   }
 
+  const handleUpdatedProduct = useCallback(
+    (product: Product) => {
+      const updatedProductsList = products.filter(
+        item => item.id !== product.id,
+      );
+
+      setProducts([...updatedProductsList, product]);
+    },
+    [products],
+  );
+
   const handleCloseEditModal = useCallback(() => {
     setIsEditProductModalVisible(false);
   }, []);
@@ -101,6 +112,7 @@ export function Products() {
           isVisible={isEditProductModalVisible}
           productId={selectedProduct.id}
           onClose={handleCloseEditModal}
+          onUpdate={handleUpdatedProduct}
         />
       )}
 

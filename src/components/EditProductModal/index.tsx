@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
+import { Product } from '../../@types/Product';
 import { useSafeAsyncAction } from '../../hooks/useSafeAsyncAction';
 import ProductsService from '../../services/ProductsService';
 import { Button } from '../Button';
@@ -13,12 +14,14 @@ interface EditProductModalProps {
   isVisible: boolean;
   productId: string;
   onClose: () => void;
+  onUpdate: (product: Product) => void;
 }
 
 export function EditProductModal({
   isVisible,
   productId,
   onClose,
+  onUpdate,
 }: EditProductModalProps) {
   const productFormRef = useRef<ProductFormHandle>(null);
 
@@ -40,8 +43,20 @@ export function EditProductModal({
     getProduct();
   }, [productId, safeAsyncAction]);
 
-  async function handleSubmit() {
-    //
+  async function handleSubmit(data: FormData) {
+    try {
+      const updatedProduct = await ProductsService.updateProduct(
+        productId,
+        data,
+      );
+
+      onUpdate(updatedProduct);
+
+      onClose();
+      toast.success('Produto atualizado com sucesso!');
+    } catch {
+      toast.error('Ocorreu um erro ao editar o produto!');
+    }
   }
 
   return (

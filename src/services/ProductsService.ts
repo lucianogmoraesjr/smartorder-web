@@ -29,6 +29,12 @@ class ProductsService {
     return data;
   }
 
+  async updateProduct(id: string, formData: FormData) {
+    const { data } = await this.api.put(`products/${id}`, formData);
+
+    return data;
+  }
+
   deleteProduct(id: string) {
     return this.api.delete(`products/${id}`);
   }
