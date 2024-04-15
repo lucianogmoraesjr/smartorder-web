@@ -67,12 +67,27 @@ export const CategoryWrapper = styled.div`
   gap: 1rem;
   max-width: 100%;
 
-  strong {
-    font-size: 0.875rem;
-    font-weight: 400;
-    line-height: 1.5;
-    color: ${({ theme }) => theme.colors.gray[400]};
+  & > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    strong {
+      font-size: 0.875rem;
+      font-weight: 400;
+      line-height: 1.5;
+      color: ${({ theme }) => theme.colors.gray[400]};
+    }
   }
+`;
+
+export const CategorySelected = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.875rem;
+  border-radius: 999px;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.1);
 `;
 
 export const CategoriesList = styled.div`

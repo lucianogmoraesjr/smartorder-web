@@ -30,6 +30,7 @@ import { NewIngredientModal } from '../NewIngredientModal';
 
 import {
   CategoriesList,
+  CategorySelected,
   CategoryWrapper,
   Container,
   Form,
@@ -75,7 +76,7 @@ export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
     const [priceInCents, setPriceInCents] = useState('');
     const [imagePath, setImagePath] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(
       null,
     );
     const [selectedIngredientIds, setSelectedIngredientIds] = useState<
@@ -101,7 +102,7 @@ export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
         setDescription(product.description ?? '');
         setPriceInCents(product.priceInCents.toString() ?? '');
         setImagePath(product.imagePath ?? '');
-        setSelectedCategoryId(product.category.id ?? '');
+        setSelectedCategory(product.category ?? '');
 
         if (product.ingredients) {
           const ingredientIds = product.ingredients.map(item => ({
@@ -166,12 +167,12 @@ export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
       setDescription(event.target.value);
     }
 
-    function handleSelectCategory(categoryId: string) {
-      if (selectedCategoryId === categoryId) {
+    function handleSelectCategory(category: Category) {
+      if (selectedCategory?.id === category.id) {
         return;
       }
 
-      setSelectedCategoryId(categoryId);
+      setSelectedCategory(category);
     }
 
     function handleSearchTermChange(event: ChangeEvent<HTMLInputElement>) {
@@ -214,12 +215,12 @@ export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
 
       const formData = new FormData(event.currentTarget);
 
-      if (!selectedCategoryId) {
+      if (!selectedCategory) {
         toast.error('Selecione uma categoria!');
         return;
       }
 
-      formData.set('categoryId', selectedCategoryId);
+      formData.set('categoryId', selectedCategory.id);
       formData.set('ingredients', JSON.stringify(selectedIngredientIds));
       formData.set('priceInCents', priceInCents);
 
@@ -309,25 +310,40 @@ export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
               </InputGroup>
 
               <CategoryWrapper>
-                <strong>Categoria</strong>
+                <div>
+                  <strong>Categoria</strong>
 
-                <CategoriesList>
-                  {categories.map(category => (
-                    <button
-                      type="button"
-                      key={category.id}
-                      onClick={() => handleSelectCategory(category.id)}
-                      className={
-                        selectedCategoryId === category.id ? 'selected' : ''
-                      }
-                    >
-                      <CategoryComponent
-                        emoji={category.emoji}
-                        name={category.name}
-                      />
-                    </button>
-                  ))}
-                </CategoriesList>
+                  {selectedCategory && (
+                    <CategorySelected>
+                      <span>{selectedCategory.emoji}</span>
+                      <span>{selectedCategory.name}</span>
+                      <Button
+                        type="button"
+                        $variant="secondary"
+                        onClick={() => setSelectedCategory(null)}
+                      >
+                        Alterar
+                      </Button>
+                    </CategorySelected>
+                  )}
+                </div>
+
+                {!selectedCategory && (
+                  <CategoriesList>
+                    {categories.map(category => (
+                      <button
+                        type="button"
+                        key={category.id}
+                        onClick={() => handleSelectCategory(category)}
+                      >
+                        <CategoryComponent
+                          emoji={category.emoji}
+                          name={category.name}
+                        />
+                      </button>
+                    ))}
+                  </CategoriesList>
+                )}
               </CategoryWrapper>
             </ProductWrapper>
 
