@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router-dom';
 
+import { useAuth } from '../../hooks/useAuth';
 import HistoryIcon from '../Icons/HistoryIcon';
 import HomeIcon from '../Icons/HomeIcon';
 import LogoutIcon from '../Icons/LogoutIcon';
@@ -16,6 +17,12 @@ import {
 } from './styles';
 
 export function Sidebar() {
+  const { signOut } = useAuth();
+
+  function handleLogout() {
+    signOut();
+  }
+
   return (
     <Container>
       <Logo>
@@ -61,7 +68,7 @@ export function Sidebar() {
           </a>
         </NavItem>
 
-        <button type="button">
+        <button type="button" onClick={handleLogout}>
           <LogoutIcon />
           Sair
         </button>
