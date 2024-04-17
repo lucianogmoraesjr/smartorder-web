@@ -53,10 +53,10 @@ export function Sidebar() {
         </NavItem>
 
         <NavItem>
-          <a href="/">
+          <NavLink to="/users">
             <UsersIcon />
             Usuários
-          </a>
+          </NavLink>
         </NavItem>
       </NavContainer>
 

@@ -70,6 +70,10 @@ export const NavItem = styled.nav`
       }
 
       svg {
+        circle {
+          stroke: ${({ theme }) => theme.colors.red.main};
+        }
+
         path {
           stroke: ${({ theme }) => theme.colors.red.main};
         }

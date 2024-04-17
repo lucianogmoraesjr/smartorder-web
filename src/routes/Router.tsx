@@ -6,6 +6,7 @@ import { Login } from '../pages/Login';
 import { Menu } from '../pages/Menu';
 import { Categories } from '../pages/Menu/Categories';
 import { Products } from '../pages/Menu/Products';
+import { Users } from '../pages/Users';
 
 import { AuthGuard } from './AuthGuard';
 
@@ -29,6 +30,8 @@ export function Router() {
             <Route path="categories" element={<Categories />} />
             <Route path="*" element={<NoMatch />} />
           </Route>
+          <Route path="/users" element={<Users />} />
+
           <Route path="*" element={<NoMatch />} />
         </Route>
       </Route>
