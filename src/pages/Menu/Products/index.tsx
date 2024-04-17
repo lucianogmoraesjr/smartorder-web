@@ -9,6 +9,7 @@ import TrashIcon from '../../../components/Icons/TrashIcon';
 import { NewProductModal } from '../../../components/NewProductModal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
+import { useAuth } from '../../../hooks/useAuth';
 import ProductsService from '../../../services/ProductsService';
 import { formatCurrency } from '../../../utils/formatCurrency';
 
@@ -25,6 +26,8 @@ export function Products() {
     useState(false);
   const [isEditProductModalVisible, setIsEditProductModalVisible] =
     useState(false);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     async function fetchProducts() {
@@ -97,6 +100,8 @@ export function Products() {
     }
   }, [selectedProduct.id, handleCloseDeleteModal]);
 
+  const isAdmin = user.role === 'ADMIN';
+
   return (
     <>
       {isNewProductModalVisible && (
@@ -147,9 +152,11 @@ export function Products() {
       </DeleteModal>
 
       <TableHeader title="Produtos" length={products.length}>
-        <button type="button" onClick={handleOpenNewProductModal}>
-          Novo produto
-        </button>
+        {isAdmin && (
+          <button type="button" onClick={handleOpenNewProductModal}>
+            Novo produto
+          </button>
+        )}
       </TableHeader>
 
       <Table>
@@ -159,7 +166,7 @@ export function Products() {
             <th>Nome</th>
             <th>Categoria</th>
             <th>Preço</th>
-            <th>Ações</th>
+            {isAdmin && <th>Ações</th>}
           </tr>
         </thead>
 
@@ -180,23 +187,25 @@ export function Products() {
               </td>
               <td>{formatCurrency(product.priceInCents)}</td>
 
-              <td>
-                <div className="actions">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEditModal(product)}
-                  >
-                    <PencilIcon />
-                  </button>
+              {isAdmin && (
+                <td>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditModal(product)}
+                    >
+                      <PencilIcon />
+                    </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleOpenDeleteModal(product)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDeleteModal(product)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

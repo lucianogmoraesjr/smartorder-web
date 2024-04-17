@@ -17,11 +17,13 @@ import {
 } from './styles';
 
 export function Sidebar() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
 
   function handleLogout() {
     signOut();
   }
+
+  const isAdmin = user.role === 'ADMIN';
 
   return (
     <Container>
@@ -52,12 +54,14 @@ export function Sidebar() {
           </NavLink>
         </NavItem>
 
-        <NavItem>
-          <NavLink to="/users">
-            <UsersIcon />
-            Usuários
-          </NavLink>
-        </NavItem>
+        {isAdmin && (
+          <NavItem>
+            <NavLink to="/users">
+              <UsersIcon />
+              Usuários
+            </NavLink>
+          </NavItem>
+        )}
       </NavContainer>
 
       <ProfileContainer>

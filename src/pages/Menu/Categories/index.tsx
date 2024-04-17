@@ -10,6 +10,7 @@ import TrashIcon from '../../../components/Icons/TrashIcon';
 import { NewCategoryModal } from '../../../components/NewCategoryModal';
 import { Table } from '../../../components/Table';
 import { TableHeader } from '../../../components/Table/TableHeader';
+import { useAuth } from '../../../hooks/useAuth';
 import CategoriesService from '../../../services/CategoriesService';
 
 import { Container } from './styles';
@@ -25,6 +26,8 @@ export function Categories() {
   const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
     useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     async function fetchCategories() {
@@ -105,6 +108,8 @@ export function Categories() {
     }
   }
 
+  const isAdmin = user.role === 'ADMIN';
+
   return (
     <Container>
       {isNewCategoryModalVisible && (
@@ -141,9 +146,11 @@ export function Categories() {
       </DeleteModal>
 
       <TableHeader title="Categorias" length={categories.length}>
-        <button type="button" onClick={handleOpenNewCategoryModal}>
-          Nova categoria
-        </button>
+        {isAdmin && (
+          <button type="button" onClick={handleOpenNewCategoryModal}>
+            Nova categoria
+          </button>
+        )}
       </TableHeader>
 
       <Table>
@@ -151,7 +158,7 @@ export function Categories() {
           <tr>
             <th>Emoji</th>
             <th>Nome</th>
-            <th>Ações</th>
+            {isAdmin && <th>Ações</th>}
           </tr>
         </thead>
 
@@ -160,23 +167,26 @@ export function Categories() {
             <tr key={category.id}>
               <td>{category.emoji}</td>
               <td>{category.name}</td>
-              <td>
-                <div className="actions">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEditCategoryModal(category)}
-                  >
-                    <PencilIcon />
-                  </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteCategory(category.id)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
+              {isAdmin && (
+                <td>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditCategoryModal(category)}
+                    >
+                      <PencilIcon />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
