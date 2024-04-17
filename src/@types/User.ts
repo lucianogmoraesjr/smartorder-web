@@ -4,3 +4,10 @@ export interface User {
   email: string;
   role: 'WAITER' | 'ADMIN';
 }
+
+export interface UserRequestBody {
+  name: string;
+  email: string;
+  password: string;
+  role: 'WAITER' | 'ADMIN';
+}

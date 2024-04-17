@@ -1,4 +1,4 @@
-import { InputHTMLAttributes } from 'react';
+import { ElementRef, InputHTMLAttributes, forwardRef } from 'react';
 
 import { Container, StyledInput } from './styles';
 
@@ -9,16 +9,18 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   error?: string;
 }
 
-export function Input({ name, label, error, legend, ...rest }: InputProps) {
-  return (
-    <Container>
-      <label htmlFor={name}>{label}</label>
-      <StyledInput id={name} name={name} $error={error} {...rest} />
-      {legend && (
-        <label htmlFor={name} className="input-legend">
-          {legend}
-        </label>
-      )}
-    </Container>
-  );
-}
+export const Input = forwardRef<ElementRef<typeof StyledInput>, InputProps>(
+  ({ name, label, error, legend, ...rest }: InputProps, ref) => {
+    return (
+      <Container>
+        <label htmlFor={name}>{label}</label>
+        <StyledInput id={name} name={name} $error={error} {...rest} ref={ref} />
+        {legend && (
+          <label htmlFor={name} className="input-legend">
+            {legend}
+          </label>
+        )}
+      </Container>
+    );
+  },
+);

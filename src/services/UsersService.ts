@@ -1,6 +1,6 @@
 import { Axios } from 'axios';
 
-import { User } from '../@types/User';
+import { User, UserRequestBody } from '../@types/User';
 
 import { api } from './api';
 
@@ -19,6 +19,11 @@ class UsersService {
   async getUser() {
     const { data } = await this.api.get<User>('users/me');
     return data;
+  }
+
+  async createUser(data: UserRequestBody) {
+    const { data: user } = await this.api.post<User>('users', data);
+    return user;
   }
 }
 
