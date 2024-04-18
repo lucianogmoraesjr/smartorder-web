@@ -3,8 +3,8 @@ import { ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { Input } from '../Input';
-import { InputGroup } from '../InputGroup';
+import { Input } from '../../../../components/Input';
+import { InputGroup } from '../../../../components/InputGroup';
 
 import { Form, RadioContainer, RadioGroup, RadioItem } from './styles';
 

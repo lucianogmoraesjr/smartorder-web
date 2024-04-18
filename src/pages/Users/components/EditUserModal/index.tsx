@@ -2,10 +2,10 @@ import { CanceledError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
-import { User, UserRequestBody } from '../../@types/User';
-import UsersService from '../../services/UsersService';
-import { Button } from '../Button';
-import { Modal } from '../Modal';
+import { User, UserRequestBody } from '../../../../@types/User';
+import { Button } from '../../../../components/Button';
+import { Modal } from '../../../../components/Modal';
+import UsersService from '../../../../services/UsersService';
 import { UserForm } from '../UserForm';
 
 import { Actions, Container } from './styles';

@@ -1,9 +1,10 @@
 import { toast } from 'react-toastify';
 
-import { Category, CategoryRequestBody } from '../../@types/Category';
-import CategoriesService from '../../services/CategoriesService';
+import { Category, CategoryRequestBody } from '@/@types/Category';
+import { Modal } from '@/components/Modal';
+import CategoriesService from '@/services/CategoriesService';
+
 import { CategoryForm } from '../CategoryForm';
-import { Modal } from '../Modal';
 
 import { SubmitButton } from './styles';
 

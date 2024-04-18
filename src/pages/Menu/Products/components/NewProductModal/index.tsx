@@ -1,8 +1,9 @@
 import { toast } from 'react-toastify';
 
-import { Product } from '../../@types/Product';
-import ProductsService from '../../services/ProductsService';
-import { Modal } from '../Modal';
+import { Product } from '@/@types/Product';
+import { Modal } from '@/components/Modal';
+import ProductsService from '@/services/ProductsService';
+
 import { ProductForm } from '../ProductForm';
 
 import { SubmitButton } from './styles';

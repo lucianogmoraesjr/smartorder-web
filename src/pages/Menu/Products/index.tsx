@@ -1,115 +1,33 @@
-import { CanceledError } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
+import { DeleteModal } from '@/components/DeleteModal';
+import PencilIcon from '@/components/Icons/PencilIcon';
+import TrashIcon from '@/components/Icons/TrashIcon';
+import { Table } from '@/components/Table';
+import { TableHeader } from '@/components/Table/TableHeader';
+import { formatCurrency } from '@/utils/formatCurrency';
 
-import { Product } from '../../../@types/Product';
-import { DeleteModal } from '../../../components/DeleteModal';
-import { EditProductModal } from '../../../components/EditProductModal';
-import PencilIcon from '../../../components/Icons/PencilIcon';
-import TrashIcon from '../../../components/Icons/TrashIcon';
-import { NewProductModal } from '../../../components/NewProductModal';
-import { Table } from '../../../components/Table';
-import { TableHeader } from '../../../components/Table/TableHeader';
-import { useAuth } from '../../../hooks/useAuth';
-import ProductsService from '../../../services/ProductsService';
-import { formatCurrency } from '../../../utils/formatCurrency';
-
+import { EditProductModal } from './components/EditProductModal';
+import { NewProductModal } from './components/NewProductModal';
 import { DeleteProductContainer, ProductContainer } from './styles';
+import { useProducts } from './useProducts';
 
 export function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<Product>(
-    {} as Product,
-  );
-
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [isNewProductModalVisible, setIsNewProductModalVisible] =
-    useState(false);
-  const [isEditProductModalVisible, setIsEditProductModalVisible] =
-    useState(false);
-
-  const { user } = useAuth();
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchProducts() {
-      try {
-        const productsList = await ProductsService.listProducts(
-          controller.signal,
-        );
-
-        setProducts(productsList);
-      } catch (error) {
-        if (error instanceof CanceledError) {
-          return;
-        }
-
-        toast.error('Ocorreu um erro ao listar os produtos!');
-      }
-    }
-
-    fetchProducts();
-
-    return () => controller.abort();
-  }, []);
-
-  function handleOpenNewProductModal() {
-    setIsNewProductModalVisible(true);
-  }
-
-  const handleCloseNewProductModal = useCallback(() => {
-    setIsNewProductModalVisible(false);
-  }, []);
-
-  const handleNewProduct = useCallback((product: Product) => {
-    setProducts(prevState => prevState.concat(product));
-  }, []);
-
-  function handleOpenEditModal(product: Product) {
-    setIsEditProductModalVisible(true);
-    setSelectedProduct(product);
-  }
-
-  const handleUpdatedProduct = useCallback(
-    (product: Product) => {
-      const updatedProductsList = products.filter(
-        item => item.id !== product.id,
-      );
-
-      setProducts([...updatedProductsList, product]);
-    },
-    [products],
-  );
-
-  const handleCloseEditModal = useCallback(() => {
-    setIsEditProductModalVisible(false);
-  }, []);
-
-  function handleOpenDeleteModal(product: Product) {
-    setSelectedProduct(product);
-    setIsDeleteModalVisible(true);
-  }
-
-  const handleCloseDeleteModal = useCallback(() => {
-    setIsDeleteModalVisible(false);
-  }, []);
-
-  const handleConfirmDeleteProduct = useCallback(async () => {
-    try {
-      await ProductsService.deleteProduct(selectedProduct.id);
-
-      setProducts(prevState =>
-        prevState.filter(product => product.id !== selectedProduct.id),
-      );
-
-      handleCloseDeleteModal();
-
-      toast.success('Produto deletado com sucesso!');
-    } catch (error) {
-      toast.error('Ocorreu um erro ao deletar o produto!');
-    }
-  }, [selectedProduct.id, handleCloseDeleteModal]);
+  const {
+    products,
+    selectedProduct,
+    isDeleteModalVisible,
+    isNewProductModalVisible,
+    isEditProductModalVisible,
+    user,
+    handleOpenNewProductModal,
+    handleCloseNewProductModal,
+    handleNewProduct,
+    handleOpenEditModal,
+    handleUpdatedProduct,
+    handleCloseEditModal,
+    handleOpenDeleteModal,
+    handleCloseDeleteModal,
+    handleConfirmDeleteProduct,
+  } = useProducts();
 
   const isAdmin = user.role === 'ADMIN';
 

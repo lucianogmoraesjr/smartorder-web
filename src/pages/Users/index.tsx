@@ -1,104 +1,34 @@
-import { CanceledError } from 'axios';
-import { useCallback, useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-
-import { User } from '../../@types/User';
 import { DeleteModal } from '../../components/DeleteModal';
-import { EditUserModal } from '../../components/EditUserModal';
 import { Header } from '../../components/Header';
 import PencilIcon from '../../components/Icons/PencilIcon';
 import TrashIcon from '../../components/Icons/TrashIcon';
-import UsesIcon from '../../components/Icons/UsersIcon';
+import UsersIcon from '../../components/Icons/UsersIcon';
 import { Input } from '../../components/Input';
-import { NewUserModal } from '../../components/NewUserModal';
 import { Table } from '../../components/Table';
 import { TableHeader } from '../../components/Table/TableHeader';
-import UsersService from '../../services/UsersService';
 
+import { EditUserModal } from './components/EditUserModal';
+import { NewUserModal } from './components/NewUserModal';
 import { Container, DeleteModalContent } from './styles';
+import { useUsers } from './useUsers';
 
 export function Users() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User>({} as User);
-
-  const [isNewUserModalVisible, setIsNewUserModalVisible] = useState(false);
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [isEditUserModalVisible, setIsEditUserModalVisible] = useState(false);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    async function fetchUsers() {
-      try {
-        const users = await UsersService.listUsers(controller.signal);
-
-        setUsers(users);
-      } catch (error) {
-        if (error instanceof CanceledError) {
-          return;
-        }
-
-        toast.error('Ocorreu um erro listar os usuários!');
-      }
-    }
-
-    fetchUsers();
-
-    return () => controller.abort();
-  }, []);
-
-  function handleOpenNewUserModal() {
-    setIsNewUserModalVisible(true);
-  }
-
-  const handleNewUser = useCallback((user: User) => {
-    setUsers(prevState => prevState.concat(user));
-  }, []);
-
-  const handleCloseNewUserModal = useCallback(() => {
-    setIsNewUserModalVisible(false);
-  }, []);
-
-  function handleOpenEditUserModal(user: User) {
-    setSelectedUser(user);
-    setIsEditUserModalVisible(true);
-  }
-
-  const handleUpdateUser = useCallback(
-    (user: User) => {
-      const updatedUsers = users.filter(item => item.id !== user.id);
-
-      setUsers([...updatedUsers, user]);
-    },
-    [users],
-  );
-
-  const handleCloseEditUserModal = useCallback(() => {
-    setIsEditUserModalVisible(false);
-  }, []);
-
-  function handleOpenDeleteModal(user: User) {
-    setSelectedUser(user);
-    setIsDeleteModalVisible(true);
-  }
-
-  const handleCloseDeleteModal = useCallback(() => {
-    setIsDeleteModalVisible(false);
-  }, []);
-
-  async function handleDeleteUser() {
-    try {
-      await UsersService.deleteUser(selectedUser.id);
-
-      setUsers(prevState =>
-        prevState.filter(user => user.id !== selectedUser.id),
-      );
-
-      handleCloseDeleteModal();
-    } catch {
-      toast.error('Ocorreu um erro excluir o usuário!');
-    }
-  }
+  const {
+    users,
+    selectedUser,
+    isNewUserModalVisible,
+    isDeleteModalVisible,
+    isEditUserModalVisible,
+    handleOpenNewUserModal,
+    handleNewUser,
+    handleCloseNewUserModal,
+    handleOpenEditUserModal,
+    handleUpdateUser,
+    handleCloseEditUserModal,
+    handleOpenDeleteModal,
+    handleCloseDeleteModal,
+    handleDeleteUser,
+  } = useUsers();
 
   return (
     <>
@@ -139,7 +69,7 @@ export function Users() {
 
       <Container>
         <Header
-          icon={UsesIcon}
+          icon={UsersIcon}
           title="Usuários"
           subtitle="Cadastre e gerencie seus usuários"
         />

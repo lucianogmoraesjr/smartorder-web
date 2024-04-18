@@ -2,12 +2,13 @@ import { CanceledError } from 'axios';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { Category, CategoryRequestBody } from '../../@types/Category';
-import { useSafeAsyncAction } from '../../hooks/useSafeAsyncAction';
-import CategoriesService from '../../services/CategoriesService';
-import { Button } from '../Button';
+import { Category, CategoryRequestBody } from '@/@types/Category';
+import { Button } from '@/components/Button';
+import { Modal } from '@/components/Modal';
+import { useSafeAsyncAction } from '@/hooks/useSafeAsyncAction';
+import CategoriesService from '@/services/CategoriesService';
+
 import { CategoryForm, CategoryFormHandle } from '../CategoryForm';
-import { Modal } from '../Modal';
 
 import { FormActions } from './styles';
 

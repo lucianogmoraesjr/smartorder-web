@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 
-import { Button } from '../Button';
+import { Button } from '@/components/Button';
 
 export const SubmitButton = styled(Button)`
   align-self: flex-end;

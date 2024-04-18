@@ -2,11 +2,12 @@ import { CanceledError } from 'axios';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
-import { Product } from '../../@types/Product';
-import { useSafeAsyncAction } from '../../hooks/useSafeAsyncAction';
-import ProductsService from '../../services/ProductsService';
-import { Button } from '../Button';
-import { Modal } from '../Modal';
+import { Product } from '@/@types/Product';
+import { Button } from '@/components/Button';
+import { Modal } from '@/components/Modal';
+import { useSafeAsyncAction } from '@/hooks/useSafeAsyncAction';
+import ProductsService from '@/services/ProductsService';
+
 import { ProductForm, ProductFormHandle } from '../ProductForm';
 
 import { Actions, SubmitButton } from './styles';

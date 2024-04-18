@@ -8,12 +8,12 @@ import {
 } from 'react';
 import { z } from 'zod';
 
-import { Category, CategoryRequestBody } from '../../@types/Category';
-import { useErrors } from '../../hooks/useErrors';
-import { Input } from '../Input';
-import { InputGroup } from '../InputGroup';
-
 import { Form } from './styles';
+
+import { Category, CategoryRequestBody } from '@/@types/Category';
+import { Input } from '@/components/Input';
+import { InputGroup } from '@/components/InputGroup';
+import { useErrors } from '@/hooks/useErrors';
 
 interface CategoryFormProps {
   onSubmit(category: CategoryRequestBody): Promise<void>;

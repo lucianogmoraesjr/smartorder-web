@@ -13,21 +13,21 @@ import {
 import { toast } from 'react-toastify';
 import { z } from 'zod';
 
-import { Category } from '../../@types/Category';
-import { Ingredient } from '../../@types/Ingredient';
-import { Product } from '../../@types/Product';
-import { useErrors } from '../../hooks/useErrors';
-import CategoriesService from '../../services/CategoriesService';
-import IngredientsService from '../../services/IngredientsService';
-import { formatCurrency } from '../../utils/formatCurrency';
-import { Button } from '../Button';
-import { Category as CategoryComponent } from '../Category';
-import ImageIcon from '../Icons/ImageIcon';
-import { ImagePicker } from '../ImagePicker';
-import { IngredientCheckbox } from '../IngredientCheckbox';
-import { Input } from '../Input';
-import { InputGroup } from '../InputGroup';
-import { NewIngredientModal } from '../NewIngredientModal';
+import { Category } from '@/@types/Category';
+import { Ingredient } from '@/@types/Ingredient';
+import { Product } from '@/@types/Product';
+import { Button } from '@/components/Button';
+import { Category as CategoryComponent } from '@/components/Category';
+import ImageIcon from '@/components/Icons/ImageIcon';
+import { ImagePicker } from '@/components/ImagePicker';
+import { IngredientCheckbox } from '@/components/IngredientCheckbox';
+import { Input } from '@/components/Input';
+import { InputGroup } from '@/components/InputGroup';
+import { NewIngredientModal } from '@/components/NewIngredientModal';
+import { useErrors } from '@/hooks/useErrors';
+import CategoriesService from '@/services/CategoriesService';
+import IngredientsService from '@/services/IngredientsService';
+import { formatCurrency } from '@/utils/formatCurrency';
 
 import {
   CategoriesList,
