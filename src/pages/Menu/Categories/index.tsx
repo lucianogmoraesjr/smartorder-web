@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -30,17 +31,25 @@ export function Categories() {
   const { user } = useAuth();
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchCategories() {
       try {
-        const categoriesList = await CategoriesService.listCategories();
+        const categoriesList = await CategoriesService.listCategories(
+          controller.signal,
+        );
 
         setCategories(categoriesList);
-      } catch {
+      } catch (error) {
+        if (error instanceof CanceledError) return;
+
         toast.error('Ocorreu um erro ao carregar as categorias!');
       }
     }
 
     fetchCategories();
+
+    return () => controller.abort();
   }, []);
 
   function handleOpenNewCategoryModal() {

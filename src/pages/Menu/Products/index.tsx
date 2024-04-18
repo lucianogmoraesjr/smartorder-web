@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -30,17 +31,27 @@ export function Products() {
   const { user } = useAuth();
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchProducts() {
       try {
-        const productsList = await ProductsService.listProducts();
+        const productsList = await ProductsService.listProducts(
+          controller.signal,
+        );
 
         setProducts(productsList);
       } catch (error) {
+        if (error instanceof CanceledError) {
+          return;
+        }
+
         toast.error('Ocorreu um erro ao listar os produtos!');
       }
     }
 
     fetchProducts();
+
+    return () => controller.abort();
   }, []);
 
   function handleOpenNewProductModal() {

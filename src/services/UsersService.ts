@@ -11,18 +11,22 @@ class UsersService {
     this.api = api;
   }
 
-  async listUsers() {
-    const { data } = await this.api.get<User[]>('users');
+  async listUsers(signal?: AbortSignal) {
+    const { data } = await this.api.get<User[]>('users', {
+      signal,
+    });
     return data;
   }
 
-  async getUser() {
-    const { data } = await this.api.get<User>('users/me');
+  async getUser(signal?: AbortSignal) {
+    const { data } = await this.api.get<User>('users/me', { signal });
     return data;
   }
 
-  async getUserById(id: string) {
-    const { data } = await this.api.get<User>(`users/${id}`);
+  async getUserById(id: string, signal?: AbortSignal) {
+    const { data } = await this.api.get<User>(`users/${id}`, {
+      signal,
+    });
     return data;
   }
 

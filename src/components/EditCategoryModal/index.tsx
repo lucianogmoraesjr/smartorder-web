@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -34,19 +35,28 @@ export function EditCategoryModal({
       return;
     }
 
+    const controller = new AbortController();
+
     async function getContact() {
       try {
-        const category = await CategoriesService.getCategoryById(categoryId);
+        const category = await CategoriesService.getCategoryById(
+          categoryId,
+          controller.signal,
+        );
 
         safeAsyncAction(() => {
           categoryFormRef?.current?.setFieldsValues(category);
         });
-      } catch {
+      } catch (error) {
+        if (error instanceof CanceledError) return;
+
         toast.error('Categoria não encontrada!');
       }
     }
 
     getContact();
+
+    return () => controller.abort();
   }, [categoryId, safeAsyncAction]);
 
   function handleOpenDeleteModal() {

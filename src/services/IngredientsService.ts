@@ -11,8 +11,10 @@ class IngredientsService {
     this.api = api;
   }
 
-  async listIngredients() {
-    const { data } = await this.api.get<Ingredient[]>('ingredients');
+  async listIngredients(signal?: AbortSignal) {
+    const { data } = await this.api.get<Ingredient[]>('ingredients', {
+      signal,
+    });
     return data;
   }
 

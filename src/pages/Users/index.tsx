@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -25,17 +26,25 @@ export function Users() {
   const [isEditUserModalVisible, setIsEditUserModalVisible] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchUsers() {
       try {
-        const users = await UsersService.listUsers();
+        const users = await UsersService.listUsers(controller.signal);
 
         setUsers(users);
-      } catch {
+      } catch (error) {
+        if (error instanceof CanceledError) {
+          return;
+        }
+
         toast.error('Ocorreu um erro listar os usuários!');
       }
     }
 
     fetchUsers();
+
+    return () => controller.abort();
   }, []);
 
   function handleOpenNewUserModal() {

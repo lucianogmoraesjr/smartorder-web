@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { CanceledError } from 'axios';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { User, UserRequestBody } from '../../@types/User';
@@ -25,31 +26,42 @@ export function EditUserModal({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function getUser() {
       try {
-        const user = await UsersService.getUserById(userId);
+        const user = await UsersService.getUserById(userId, controller.signal);
 
         setUser(user);
-      } catch {
+      } catch (error) {
+        if (error instanceof CanceledError) {
+          return;
+        }
+
         toast.error('Ocorreu um erro ao buscar o usuário!');
       }
     }
 
     getUser();
+
+    return () => controller.abort();
   }, [userId]);
 
-  async function handleSubmit(data: UserRequestBody) {
-    try {
-      const updatedUser = await UsersService.updateUser(userId, data);
+  const handleSubmit = useCallback(
+    async (data: UserRequestBody) => {
+      try {
+        const updatedUser = await UsersService.updateUser(userId, data);
 
-      onUpdate(updatedUser);
+        onUpdate(updatedUser);
 
-      onClose();
-      toast.success('Usuário editado com editado com sucesso!');
-    } catch {
-      toast.error('Ocorreu um erro ao editar o usuário!');
-    }
-  }
+        onClose();
+        toast.success('Usuário editado com editado com sucesso!');
+      } catch {
+        toast.error('Ocorreu um erro ao editar o usuário!');
+      }
+    },
+    [onClose, onUpdate, userId],
+  );
 
   if (!user) {
     return;

@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import {
   ChangeEvent,
   FormEvent,
@@ -115,31 +116,51 @@ export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
     }));
 
     useEffect(() => {
+      const controller = new AbortController();
+
       async function fetchCategories() {
         try {
-          const categoriesList = await CategoriesService.listCategories();
+          const categoriesList = await CategoriesService.listCategories(
+            controller.signal,
+          );
 
           setCategories(categoriesList);
-        } catch {
+        } catch (error) {
+          if (error instanceof CanceledError) {
+            return;
+          }
+
           toast.error('Ocorreu um erro ao buscar as categorias!');
         }
       }
 
       fetchCategories();
+
+      return () => controller.abort();
     }, []);
 
     useEffect(() => {
+      const controller = new AbortController();
+
       async function fetchIngredients() {
         try {
-          const ingredientsList = await IngredientsService.listIngredients();
+          const ingredientsList = await IngredientsService.listIngredients(
+            controller.signal,
+          );
 
           setIngredients(ingredientsList);
-        } catch {
+        } catch (error) {
+          if (error instanceof CanceledError) {
+            return;
+          }
+
           toast.error('Ocorreu um erro ao buscar os ingredients!');
         }
       }
 
       fetchIngredients();
+
+      return () => controller.abort();
     }, []);
 
     function handleNameChange(event: ChangeEvent<HTMLInputElement>) {

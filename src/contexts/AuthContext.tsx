@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import {
   ReactNode,
   createContext,
@@ -48,19 +49,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function getCurrentUser() {
       try {
         if (isAuthenticated) {
-          const currentUser = await UsersService.getUser();
+          const currentUser = await UsersService.getUser(controller.signal);
 
           setUser(currentUser);
         }
-      } catch {
+      } catch (error) {
+        if (error instanceof CanceledError) return;
+
         toast.error('Ocorreu um erro ao buscar as informações do usuário');
       }
     }
 
     getCurrentUser();
+
+    return () => controller.abort();
   }, [isAuthenticated]);
 
   const signIn = useCallback(async ({ email, password }: SignInRequest) => {

@@ -1,3 +1,4 @@
+import { CanceledError } from 'axios';
 import { useEffect, useRef } from 'react';
 import { toast } from 'react-toastify';
 
@@ -28,19 +29,28 @@ export function EditProductModal({
   const safeAsyncAction = useSafeAsyncAction();
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function getProduct() {
       try {
-        const product = await ProductsService.getProductById(productId);
+        const product = await ProductsService.getProductById(
+          productId,
+          controller.signal,
+        );
 
         safeAsyncAction(() => {
           productFormRef.current?.setFieldsValues(product);
         });
-      } catch {
+      } catch (error) {
+        if (error instanceof CanceledError) return;
+
         toast.error('Produto não encontrado!');
       }
     }
 
     getProduct();
+
+    return () => controller.abort();
   }, [productId, safeAsyncAction]);
 
   async function handleSubmit(data: FormData) {

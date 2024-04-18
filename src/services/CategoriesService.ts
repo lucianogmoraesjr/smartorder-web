@@ -14,13 +14,17 @@ class CategoriesService {
     this.api = api;
   }
 
-  async listCategories() {
-    const { data } = await this.api.get<Category[]>('categories');
+  async listCategories(signal?: AbortSignal) {
+    const { data } = await this.api.get<Category[]>('categories', {
+      signal,
+    });
     return data;
   }
 
-  async getCategoryById(id: string) {
-    const { data } = await this.api.get<Category>(`categories/${id}`);
+  async getCategoryById(id: string, signal?: AbortSignal) {
+    const { data } = await this.api.get<Category>(`categories/${id}`, {
+      signal,
+    });
     return data;
   }
 

@@ -11,14 +11,18 @@ class ProductsService {
     this.api = api;
   }
 
-  async listProducts() {
-    const { data } = await this.api.get<Product[]>('products');
+  async listProducts(signal?: AbortSignal) {
+    const { data } = await this.api.get<Product[]>('products', {
+      signal,
+    });
 
     return data;
   }
 
-  async getProductById(id: string) {
-    const { data } = await this.api.get(`products/${id}`);
+  async getProductById(id: string, signal?: AbortSignal) {
+    const { data } = await this.api.get(`products/${id}`, {
+      signal,
+    });
 
     return data;
   }
