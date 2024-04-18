@@ -21,9 +21,23 @@ class UsersService {
     return data;
   }
 
+  async getUserById(id: string) {
+    const { data } = await this.api.get<User>(`users/${id}`);
+    return data;
+  }
+
   async createUser(data: UserRequestBody) {
     const { data: user } = await this.api.post<User>('users', data);
     return user;
+  }
+
+  async updateUser(id: string, data: UserRequestBody) {
+    const { data: user } = await this.api.put<User>(`users/${id}`, data);
+    return user;
+  }
+
+  deleteUser(id: string) {
+    return this.api.delete(`users/${id}`);
   }
 }
 

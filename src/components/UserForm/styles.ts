@@ -40,9 +40,14 @@ export const RadioItem = styled.div`
   input[type='radio'] {
     width: 1.125rem;
     height: 1.125rem;
+
+    accent-color: ${({ theme }) => theme.colors.red.main};
+    cursor: pointer;
   }
 
   label {
+    cursor: pointer;
+
     font-size: 0.875rem;
     line-height: 1.5;
     color: ${({ theme }) => theme.colors.gray[400]};

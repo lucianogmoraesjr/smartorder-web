@@ -21,16 +21,18 @@ type RegisterUserFormData = z.infer<typeof registerUserFormSchema>;
 
 interface UserFormProps {
   children: ReactNode;
+  defaultValues?: Omit<RegisterUserFormData, 'password'>;
   onSubmit: (data: RegisterUserFormData) => Promise<void>;
 }
 
-export function UserForm({ children, onSubmit }: UserFormProps) {
+export function UserForm({ children, defaultValues, onSubmit }: UserFormProps) {
   const {
     handleSubmit,
     register,
     formState: { errors },
   } = useForm<RegisterUserFormData>({
     resolver: zodResolver(registerUserFormSchema),
+    defaultValues,
   });
 
   return (
