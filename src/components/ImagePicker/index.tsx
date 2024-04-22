@@ -28,11 +28,7 @@ export const ImagePicker = forwardRef<HTMLInputElement, ImagePickerProps>(
       <Container>
         <ImagePreviewContainer>
           {imagePath && !preview ? (
-            <img
-              src={`http://localhost:3333/tmp/${imagePath}`}
-              alt=""
-              className="preview"
-            />
+            <img src={imagePath} alt="" className="preview" />
           ) : preview ? (
             <img src={preview} alt="" className="preview" />
           ) : (

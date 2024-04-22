@@ -104,7 +104,7 @@ export function Products() {
             <tr key={product.id}>
               <td>
                 <img
-                  src={`http://localhost:3333/tmp/${product.imagePath}`}
+                  src={product.imagePath}
                   alt={`Imagem de ${product.name}`}
                 />
               </td>
