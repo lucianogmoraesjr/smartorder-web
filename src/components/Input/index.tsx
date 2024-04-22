@@ -15,7 +15,7 @@ export const Input = forwardRef<ElementRef<typeof StyledInput>, InputProps>(
       <Container>
         <label htmlFor={name}>{label}</label>
         <StyledInput id={name} name={name} $error={error} {...rest} ref={ref} />
-        {legend && (
+        {legend && !error && (
           <label htmlFor={name} className="input-legend">
             {legend}
           </label>

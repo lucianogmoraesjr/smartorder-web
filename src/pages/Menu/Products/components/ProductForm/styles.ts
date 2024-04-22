@@ -67,7 +67,7 @@ export const CategoryWrapper = styled.div`
   gap: 1rem;
   max-width: 100%;
 
-  & > div {
+  & div:first-child {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -78,6 +78,13 @@ export const CategoryWrapper = styled.div`
       line-height: 1.5;
       color: ${({ theme }) => theme.colors.gray[400]};
     }
+  }
+
+  span.category-error {
+    margin-top: -0.75rem;
+
+    font-size: 0.875rem;
+    color: ${({ theme }) => theme.colors.red.main};
   }
 `;
 
@@ -95,17 +102,6 @@ export const CategoriesList = styled.div`
   flex: 1;
   flex-wrap: wrap;
   gap: 0.75rem;
-
-  > button {
-    all: unset;
-    flex: 1;
-    cursor: pointer;
-
-    &.selected {
-      outline: 1px solid ${({ theme }) => theme.colors.red.main};
-      border-radius: 999px;
-    }
-  }
 `;
 
 export const IngredientWrapper = styled.div`

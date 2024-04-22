@@ -1,14 +1,15 @@
 import { CanceledError } from 'axios';
-import { useEffect, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Product } from '@/@types/Product';
 import { Button } from '@/components/Button';
 import { Modal } from '@/components/Modal';
-import { useSafeAsyncAction } from '@/hooks/useSafeAsyncAction';
 import ProductsService from '@/services/ProductsService';
+import UploadService from '@/services/UploadService';
 
-import { ProductForm, ProductFormHandle } from '../ProductForm';
+import { ProductForm } from '../ProductForm';
+import { ProductFormData } from '../ProductForm/useProductForm';
 
 import { Actions, SubmitButton } from './styles';
 
@@ -25,9 +26,7 @@ export function EditProductModal({
   onClose,
   onUpdate,
 }: EditProductModalProps) {
-  const productFormRef = useRef<ProductFormHandle>(null);
-
-  const safeAsyncAction = useSafeAsyncAction();
+  const [product, setProduct] = useState<Product | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -39,9 +38,7 @@ export function EditProductModal({
           controller.signal,
         );
 
-        safeAsyncAction(() => {
-          productFormRef.current?.setFieldsValues(product);
-        });
+        setProduct(product);
       } catch (error) {
         if (error instanceof CanceledError) return;
 
@@ -52,22 +49,47 @@ export function EditProductModal({
     getProduct();
 
     return () => controller.abort();
-  }, [productId, safeAsyncAction]);
+  }, [productId]);
 
-  async function handleSubmit(data: FormData) {
+  async function handleSubmit(data: ProductFormData) {
     try {
-      const updatedProduct = await ProductsService.updateProduct(
-        productId,
-        data,
-      );
+      if (!product) {
+        toast.error('Ocorreu um erro ao editar o produto!');
+        return;
+      }
+
+      let fileName = product.imagePath;
+
+      if (data.image) {
+        const { name: originalFileName, type: contentType } = data.image;
+
+        fileName = `${Date.now()}-${originalFileName}`;
+
+        const { signedUrl } = await UploadService.getSignedUrl(fileName);
+
+        await UploadService.uploadFile(signedUrl, data.image, contentType);
+      }
+
+      const updatedProduct = await ProductsService.updateProduct(product.id, {
+        name: data.name,
+        description: data.description,
+        priceInCents: data.priceInCents,
+        imagePath: fileName,
+        categoryId: data.categoryId,
+        ingredients: data.ingredients,
+      });
 
       onUpdate(updatedProduct);
-
-      onClose();
       toast.success('Produto atualizado com sucesso!');
     } catch {
       toast.error('Ocorreu um erro ao editar o produto!');
+    } finally {
+      onClose();
     }
+  }
+
+  if (!product) {
+    return;
   }
 
   return (
@@ -77,7 +99,7 @@ export function EditProductModal({
       title="Editar Produto"
       containerId="product-modal"
     >
-      <ProductForm onSubmit={handleSubmit} ref={productFormRef}>
+      <ProductForm onSubmit={handleSubmit} product={product}>
         <Actions>
           <Button type="button" $variant="secondary">
             Excluir Produto

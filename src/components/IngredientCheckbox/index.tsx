@@ -1,11 +1,9 @@
-import { InputHTMLAttributes } from 'react';
+import { InputHTMLAttributes, forwardRef } from 'react';
 
 import { Container } from './styles';
 
 interface IngredientCheckboxProps
   extends InputHTMLAttributes<HTMLInputElement> {
-  name: string;
-  id: string;
   ingredient: {
     id: string;
     emoji: string;
@@ -13,28 +11,26 @@ interface IngredientCheckboxProps
   };
 }
 
-export function IngredientCheckbox({
-  id,
-  name,
-  ingredient,
-  ...rest
-}: IngredientCheckboxProps) {
+export const IngredientCheckbox = forwardRef<
+  HTMLInputElement,
+  IngredientCheckboxProps
+>(({ ingredient, ...rest }, ref) => {
   return (
     <Container>
-      <label htmlFor={id}>
+      <label htmlFor={ingredient.name}>
         <div>
           <span>{ingredient.emoji}</span>
           <span>{ingredient.name}</span>
         </div>
 
         <input
+          ref={ref}
           type="checkbox"
-          name={name}
-          id={id}
+          id={ingredient.name}
           value={ingredient.id}
           {...rest}
         />
       </label>
     </Container>
   );
-}
+});

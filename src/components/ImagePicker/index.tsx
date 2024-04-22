@@ -1,51 +1,55 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, InputHTMLAttributes, forwardRef, useState } from 'react';
 
 import imagePlaceholder from '../../assets/images/image-placeholder.svg';
 
 import { Container, ImagePreviewContainer } from './styles';
 
-interface ImagePickerProps {
+interface ImagePickerProps extends InputHTMLAttributes<HTMLInputElement> {
   imagePath?: string;
 }
 
-export function ImagePicker({ imagePath }: ImagePickerProps) {
-  const [preview, setPreview] = useState<string | null>(null);
+export const ImagePicker = forwardRef<HTMLInputElement, ImagePickerProps>(
+  ({ imagePath, ...props }, ref) => {
+    const [preview, setPreview] = useState<string | null>(null);
 
-  function handleFileSelected(event: ChangeEvent<HTMLInputElement>) {
-    const { files } = event.target;
+    function handleFileSelected(event: ChangeEvent<HTMLInputElement>) {
+      const { files } = event.target;
 
-    if (!files) {
-      return;
+      if (!files) {
+        return;
+      }
+
+      const previewURL = URL.createObjectURL(files[0]);
+
+      setPreview(previewURL);
     }
 
-    const previewURL = URL.createObjectURL(files[0]);
+    return (
+      <Container>
+        <ImagePreviewContainer>
+          {imagePath && !preview ? (
+            <img
+              src={`http://localhost:3333/tmp/${imagePath}`}
+              alt=""
+              className="preview"
+            />
+          ) : preview ? (
+            <img src={preview} alt="" className="preview" />
+          ) : (
+            <img src={imagePlaceholder} alt="" />
+          )}
+        </ImagePreviewContainer>
 
-    setPreview(previewURL);
-  }
-
-  return (
-    <Container>
-      <ImagePreviewContainer>
-        {imagePath ? (
-          <img
-            src={`http://localhost:3333/tmp/${imagePath}`}
-            alt=""
-            className="preview"
-          />
-        ) : preview ? (
-          <img src={preview} alt="" className="preview" />
-        ) : (
-          <img src={imagePlaceholder} alt="" />
-        )}
-      </ImagePreviewContainer>
-
-      <input
-        type="file"
-        name="image"
-        id="image"
-        accept="image/*"
-        onChange={handleFileSelected}
-      />
-    </Container>
-  );
-}
+        <input
+          ref={ref}
+          type="file"
+          name="image"
+          id="image"
+          accept="image/*"
+          {...props}
+          onChange={handleFileSelected}
+        />
+      </Container>
+    );
+  },
+);

@@ -1,33 +1,16 @@
-import { CanceledError } from 'axios';
-import {
-  ChangeEvent,
-  FormEvent,
-  ReactNode,
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  useState,
-} from 'react';
-import { toast } from 'react-toastify';
-import { z } from 'zod';
+import { ReactNode } from 'react';
+import { Controller } from 'react-hook-form';
 
-import { Category } from '@/@types/Category';
-import { Ingredient } from '@/@types/Ingredient';
 import { Product } from '@/@types/Product';
 import { Button } from '@/components/Button';
-import { Category as CategoryComponent } from '@/components/Category';
+import { CategoryRadio } from '@/components/CategoryRadio';
 import ImageIcon from '@/components/Icons/ImageIcon';
 import { ImagePicker } from '@/components/ImagePicker';
 import { IngredientCheckbox } from '@/components/IngredientCheckbox';
 import { Input } from '@/components/Input';
 import { InputGroup } from '@/components/InputGroup';
 import { NewIngredientModal } from '@/components/NewIngredientModal';
-import { useErrors } from '@/hooks/useErrors';
-import CategoriesService from '@/services/CategoriesService';
-import IngredientsService from '@/services/IngredientsService';
-import { formatCurrency } from '@/utils/formatCurrency';
+import { currencyFormatter } from '@/utils/currencyFormatter';
 
 import {
   CategoriesList,
@@ -36,383 +19,177 @@ import {
   Container,
   Form,
   ImageInputWrapper,
-  IngredientWrapper,
   IngredientsList,
+  IngredientWrapper,
   ProductWrapper,
 } from './styles';
+import { ProductFormData, useProductForm } from './useProductForm';
 
 interface ProductFormProps {
   children: ReactNode;
-  onSubmit: (data: FormData) => Promise<void>;
+  product?: Product;
+  onSubmit: (data: ProductFormData) => Promise<void>;
 }
 
-interface SelectedIngredients {
-  ingredientId: string;
-}
+export function ProductForm({ onSubmit, children, product }: ProductFormProps) {
+  const {
+    isNewIngredientModalOpen,
+    errors,
+    control,
+    selectedCategory,
+    categories,
+    searchTerm,
+    filteredIngredients,
+    handleCloseNewIngredientModal,
+    handleNewIngredient,
+    handleSubmit,
+    register,
+    resetField,
+    handleOpenNewIngredientModal,
+    handleSearchTermChange,
+  } = useProductForm(product);
 
-export interface ProductFormHandle {
-  setFieldsValues: (product: Product) => void;
-}
+  const { format, parse } = currencyFormatter();
 
-const productFormSchema = z.object({
-  name: z.string().trim().min(1, 'Nome é obrigatório'),
-  price: z
-    .string({
-      required_error: 'Preço é obrigatório',
-    })
-    .min(1, 'Deve conter pelo menos um dígito'),
-  description: z
-    .string()
-    .trim()
-    .min(1, 'Descrição é obrigatório')
-    .max(110, 'Máximo 110 caracteres'),
-});
+  return (
+    <>
+      <NewIngredientModal
+        isVisible={isNewIngredientModalOpen}
+        onClose={handleCloseNewIngredientModal}
+        onNewIngredient={handleNewIngredient}
+      />
 
-export const ProductForm = forwardRef<ProductFormHandle, ProductFormProps>(
-  ({ onSubmit, children }, ref) => {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [priceInCents, setPriceInCents] = useState('');
-    const [imagePath, setImagePath] = useState('');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(
-      null,
-    );
-    const [selectedIngredientIds, setSelectedIngredientIds] = useState<
-      SelectedIngredients[]
-    >([]);
+      <Form onSubmit={handleSubmit(onSubmit)}>
+        <Container>
+          <ProductWrapper>
+            <ImageInputWrapper>
+              <strong>Imagem</strong>
 
-    const [isNewIngredientModalOpen, setIsNewIngredientModalOpen] =
-      useState(false);
+              <div>
+                <ImagePicker
+                  imagePath={product?.imagePath}
+                  {...register('image')}
+                />
 
-    const { setError, removeError, getErrorMessageByFieldName } = useErrors();
-
-    const filteredIngredients = useMemo(
-      () =>
-        ingredients.filter(ingredient =>
-          ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
-      [searchTerm, ingredients],
-    );
-
-    useImperativeHandle(ref, () => ({
-      setFieldsValues: (product: Product) => {
-        setName(product.name ?? '');
-        setDescription(product.description ?? '');
-        setPriceInCents(product.priceInCents.toString() ?? '');
-        setImagePath(product.imagePath ?? '');
-        setSelectedCategory(product.category ?? '');
-
-        if (product.ingredients) {
-          const ingredientIds = product.ingredients.map(item => ({
-            ingredientId: item.ingredient.id,
-          }));
-
-          setSelectedIngredientIds(ingredientIds);
-        }
-      },
-    }));
-
-    useEffect(() => {
-      const controller = new AbortController();
-
-      async function fetchCategories() {
-        try {
-          const categoriesList = await CategoriesService.listCategories(
-            controller.signal,
-          );
-
-          setCategories(categoriesList);
-        } catch (error) {
-          if (error instanceof CanceledError) {
-            return;
-          }
-
-          toast.error('Ocorreu um erro ao buscar as categorias!');
-        }
-      }
-
-      fetchCategories();
-
-      return () => controller.abort();
-    }, []);
-
-    useEffect(() => {
-      const controller = new AbortController();
-
-      async function fetchIngredients() {
-        try {
-          const ingredientsList = await IngredientsService.listIngredients(
-            controller.signal,
-          );
-
-          setIngredients(ingredientsList);
-        } catch (error) {
-          if (error instanceof CanceledError) {
-            return;
-          }
-
-          toast.error('Ocorreu um erro ao buscar os ingredients!');
-        }
-      }
-
-      fetchIngredients();
-
-      return () => controller.abort();
-    }, []);
-
-    function handleNameChange(event: ChangeEvent<HTMLInputElement>) {
-      if (event.target.value) {
-        removeError('name');
-      }
-
-      setName(event.target.value);
-    }
-
-    function handlePriceChange(event: ChangeEvent<HTMLInputElement>) {
-      const { value } = event.target;
-
-      const normalizeValue = parseFloat(value.replace(/[^\d]/g, ''));
-
-      setPriceInCents(normalizeValue.toString());
-      removeError('price');
-    }
-
-    function handleDescriptionChange(event: ChangeEvent<HTMLInputElement>) {
-      if (event.target.value) {
-        removeError('description');
-      }
-
-      setDescription(event.target.value);
-    }
-
-    function handleSelectCategory(category: Category) {
-      if (selectedCategory?.id === category.id) {
-        return;
-      }
-
-      setSelectedCategory(category);
-    }
-
-    function handleSearchTermChange(event: ChangeEvent<HTMLInputElement>) {
-      setSearchTerm(event.target.value);
-    }
-
-    function handleSelectIngredients(event: ChangeEvent<HTMLInputElement>) {
-      const isChecked = event.target.checked;
-      const { value } = event.target;
-
-      if (isChecked) {
-        setSelectedIngredientIds(prevState =>
-          prevState.concat({
-            ingredientId: value,
-          }),
-        );
-      }
-
-      if (!isChecked) {
-        setSelectedIngredientIds(prevState =>
-          prevState.filter(({ ingredientId }) => ingredientId !== value),
-        );
-      }
-    }
-
-    function handleOpenNewIngredientModal() {
-      setIsNewIngredientModalOpen(true);
-    }
-
-    const handleCloseNewIngredientModal = useCallback(() => {
-      setIsNewIngredientModalOpen(false);
-    }, []);
-
-    const handleNewIngredient = useCallback((ingredient: Ingredient) => {
-      setIngredients(prevState => prevState.concat(ingredient));
-    }, []);
-
-    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-      event.preventDefault();
-
-      const formData = new FormData(event.currentTarget);
-
-      if (!selectedCategory) {
-        toast.error('Selecione uma categoria!');
-        return;
-      }
-
-      formData.set('categoryId', selectedCategory.id);
-      formData.set('ingredients', JSON.stringify(selectedIngredientIds));
-      formData.set('priceInCents', priceInCents);
-
-      const name = formData.get('name');
-      const description = formData.get('description');
-
-      const result = productFormSchema.safeParse({
-        name: name,
-        description: description,
-        price: priceInCents,
-      });
-
-      if (!result.success) {
-        const { issues } = result.error;
-
-        for (const issue of issues) {
-          setError({
-            field: issue.path[0].toString(),
-            message: issue.message,
-          });
-        }
-      } else {
-        onSubmit(formData);
-      }
-    }
-
-    return (
-      <>
-        <NewIngredientModal
-          isVisible={isNewIngredientModalOpen}
-          onClose={handleCloseNewIngredientModal}
-          onNewIngredient={handleNewIngredient}
-        />
-
-        <Form onSubmit={handleSubmit}>
-          <Container>
-            <ProductWrapper>
-              <ImageInputWrapper>
-                <strong>Imagem</strong>
-
-                <div>
-                  <ImagePicker imagePath={imagePath} />
-
-                  <label htmlFor="image">
-                    <ImageIcon />
-                    Selecionar Imagem
-                  </label>
-                </div>
-              </ImageInputWrapper>
-
-              <div className="input-wrapper">
-                <InputGroup error={getErrorMessageByFieldName('name')}>
-                  <Input
-                    label="Nome do produto"
-                    name="name"
-                    placeholder="Quatro Queijos"
-                    value={name}
-                    onChange={handleNameChange}
-                    error={getErrorMessageByFieldName('name')}
-                  />
-                </InputGroup>
-
-                <InputGroup error={getErrorMessageByFieldName('price')}>
-                  <Input
-                    label="Preço"
-                    name="priceInCents"
-                    placeholder="R$ 35,00"
-                    value={
-                      priceInCents ? formatCurrency(Number(priceInCents)) : ''
-                    }
-                    error={getErrorMessageByFieldName('price')}
-                    onChange={handlePriceChange}
-                  />
-                </InputGroup>
+                <label htmlFor="image">
+                  <ImageIcon />
+                  Selecionar Imagem
+                </label>
               </div>
+            </ImageInputWrapper>
 
-              <InputGroup error={getErrorMessageByFieldName('description')}>
+            <div className="input-wrapper">
+              <InputGroup error={errors.name?.message}>
                 <Input
-                  label="Descrição"
-                  name="description"
-                  legend="Máximo 110 caracteres"
-                  placeholder="Pizza de Quatro Queijos com borda tradicional"
-                  error={getErrorMessageByFieldName('description')}
-                  value={description}
-                  onChange={handleDescriptionChange}
+                  label="Nome do produto"
+                  placeholder="Quatro Queijos"
+                  error={errors.name?.message}
+                  {...register('name')}
                 />
               </InputGroup>
 
-              <CategoryWrapper>
-                <div>
-                  <strong>Categoria</strong>
-
-                  {selectedCategory && (
-                    <CategorySelected>
-                      <span>{selectedCategory.emoji}</span>
-                      <span>{selectedCategory.name}</span>
-                      <Button
-                        type="button"
-                        $variant="secondary"
-                        onClick={() => setSelectedCategory(null)}
-                      >
-                        Alterar
-                      </Button>
-                    </CategorySelected>
+              <InputGroup error={errors.priceInCents?.message}>
+                <Controller
+                  name="priceInCents"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      label="Preço"
+                      name="priceInCents"
+                      placeholder="R$ 35,00"
+                      value={format(Number(field.value))}
+                      error={errors.priceInCents?.message}
+                      onChange={e => field.onChange(parse(e.target.value))}
+                    />
                   )}
-                </div>
+                />
+              </InputGroup>
+            </div>
 
-                {!selectedCategory && (
-                  <CategoriesList>
-                    {categories.map(category => (
-                      <button
-                        type="button"
-                        key={category.id}
-                        onClick={() => handleSelectCategory(category)}
-                      >
-                        <CategoryComponent
-                          emoji={category.emoji}
-                          name={category.name}
-                        />
-                      </button>
-                    ))}
-                  </CategoriesList>
+            <InputGroup error={errors.description?.message}>
+              <Input
+                label="Descrição"
+                legend="Máximo 110 caracteres"
+                placeholder="Pizza de Quatro Queijos com borda tradicional"
+                error={errors.description?.message}
+                {...register('description')}
+              />
+            </InputGroup>
+
+            <CategoryWrapper>
+              <div>
+                <strong>Categoria</strong>
+
+                {selectedCategory && (
+                  <CategorySelected>
+                    <span>{selectedCategory.emoji}</span>
+                    <span>{selectedCategory.name}</span>
+                    <Button
+                      type="button"
+                      $variant="secondary"
+                      onClick={() => resetField('categoryId')}
+                    >
+                      Alterar
+                    </Button>
+                  </CategorySelected>
                 )}
-              </CategoryWrapper>
-            </ProductWrapper>
-
-            <IngredientWrapper>
-              <div className="ingredients-header">
-                <strong>Ingredientes</strong>
-
-                <Button
-                  type="button"
-                  $variant="secondary"
-                  onClick={handleOpenNewIngredientModal}
-                >
-                  Novo ingrediente
-                </Button>
               </div>
 
-              <Input
-                label="Busque o ingrediente"
-                name="search"
-                value={searchTerm}
-                onChange={handleSearchTermChange}
-                placeholder="Ex: Quatro Queijos"
-              />
+              {errors.categoryId && (
+                <span className="category-error">
+                  {errors.categoryId.message}
+                </span>
+              )}
 
-              <IngredientsList>
-                {filteredIngredients.map(ingredient => (
-                  <IngredientCheckbox
-                    key={ingredient.id}
-                    id={ingredient.name}
-                    name={ingredient.name}
-                    ingredient={ingredient}
-                    onChange={handleSelectIngredients}
-                    checked={
-                      selectedIngredientIds.some(
-                        item => item.ingredientId === ingredient.id,
-                      )
-                        ? true
-                        : false
-                    }
-                  />
-                ))}
-              </IngredientsList>
-            </IngredientWrapper>
-          </Container>
+              {!selectedCategory && (
+                <CategoriesList>
+                  {categories.map(category => (
+                    <CategoryRadio
+                      key={category.id}
+                      category={category}
+                      {...register('categoryId')}
+                    />
+                  ))}
+                </CategoriesList>
+              )}
+            </CategoryWrapper>
+          </ProductWrapper>
 
-          {children}
-        </Form>
-      </>
-    );
-  },
-);
+          <IngredientWrapper>
+            <div className="ingredients-header">
+              <strong>Ingredientes</strong>
+
+              <Button
+                type="button"
+                $variant="secondary"
+                onClick={handleOpenNewIngredientModal}
+              >
+                Novo ingrediente
+              </Button>
+            </div>
+
+            <Input
+              label="Busque o ingrediente"
+              name="search"
+              value={searchTerm}
+              onChange={handleSearchTermChange}
+              placeholder="Ex: Quatro Queijos"
+            />
+
+            <IngredientsList>
+              {filteredIngredients.map(ingredient => (
+                <IngredientCheckbox
+                  key={ingredient.id}
+                  ingredient={ingredient}
+                  {...register('ingredients')}
+                />
+              ))}
+            </IngredientsList>
+          </IngredientWrapper>
+        </Container>
+
+        {children}
+      </Form>
+    </>
+  );
+}

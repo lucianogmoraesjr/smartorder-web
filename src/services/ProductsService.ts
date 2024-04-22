@@ -4,6 +4,24 @@ import { Product } from '../@types/Product';
 
 import { api } from './api';
 
+interface CreateProductRequest {
+  name: string;
+  description: string;
+  priceInCents: number;
+  imagePath: string;
+  categoryId: string;
+  ingredients?: Array<string>;
+}
+
+interface UpdateProductRequest {
+  name: string;
+  description: string;
+  priceInCents: number;
+  imagePath: string;
+  categoryId: string;
+  ingredients?: Array<string>;
+}
+
 class ProductsService {
   private api: Axios;
 
@@ -27,16 +45,16 @@ class ProductsService {
     return data;
   }
 
-  async createProduct(formData: FormData) {
-    const { data } = await this.api.post<Product>('products', formData);
+  async createProduct(data: CreateProductRequest) {
+    const { data: product } = await this.api.post<Product>('products', data);
 
-    return data;
+    return product;
   }
 
-  async updateProduct(id: string, formData: FormData) {
-    const { data } = await this.api.put(`products/${id}`, formData);
+  async updateProduct(id: string, data: UpdateProductRequest) {
+    const { data: product } = await this.api.put(`products/${id}`, data);
 
-    return data;
+    return product;
   }
 
   deleteProduct(id: string) {
