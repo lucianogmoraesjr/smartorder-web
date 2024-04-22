@@ -11,9 +11,7 @@ export interface Product {
     name: string;
     emoji: string;
   };
-  ingredients?: Array<{
-    ingredient: Ingredient;
-  }>;
+  ingredients?: Array<Ingredient>;
 }
 
 export interface CreateProductRequest {

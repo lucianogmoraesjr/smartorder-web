@@ -121,7 +121,7 @@ export function useProductForm(product?: Product) {
       description: product?.description,
       priceInCents: product?.priceInCents,
       categoryId: product?.category.id,
-      ingredients: product?.ingredients?.map(item => item.ingredient.id) ?? [],
+      ingredients: product?.ingredients?.map(ingredient => ingredient.id) ?? [],
     },
   });
 
