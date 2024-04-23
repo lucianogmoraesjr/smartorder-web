@@ -27,7 +27,12 @@ export function DeleteModal({
   onConfirm,
 }: DeleteModalProps) {
   return (
-    <Modal title={title} isVisible={isVisible} onClose={onClose}>
+    <Modal
+      title={title}
+      isVisible={isVisible}
+      onClose={onClose}
+      containerId="delete-modal"
+    >
       <Container>
         {confirmText ? (
           <p>{confirmText}</p>

@@ -6,11 +6,12 @@ import { Button } from '@/components/Button';
 import { CategoryRadio } from '@/components/CategoryRadio';
 import ImageIcon from '@/components/Icons/ImageIcon';
 import { ImagePicker } from '@/components/ImagePicker';
-import { IngredientCheckbox } from '@/components/IngredientCheckbox';
 import { Input } from '@/components/Input';
 import { InputGroup } from '@/components/InputGroup';
 import { NewIngredientModal } from '@/components/NewIngredientModal';
 import { currencyFormatter } from '@/utils/currencyFormatter';
+
+import { IngredientCheckbox } from '../IngredientCheckbox';
 
 import {
   CategoriesList,

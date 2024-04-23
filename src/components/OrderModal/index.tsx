@@ -58,7 +58,7 @@ export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
   }
 
   const total = order.products.reduce((acc, { product, quantity }) => {
-    acc += (product.priceInCents * quantity) / 100;
+    acc += product.priceInCents * quantity;
 
     return acc;
   }, 0);

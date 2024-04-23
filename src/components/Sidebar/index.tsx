@@ -41,10 +41,10 @@ export function Sidebar() {
         </NavItem>
 
         <NavItem>
-          <a href="/">
+          <NavLink to="/history">
             <HistoryIcon />
             Histórico
-          </a>
+          </NavLink>
         </NavItem>
 
         <NavItem>
