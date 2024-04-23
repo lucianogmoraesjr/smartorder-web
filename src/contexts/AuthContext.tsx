@@ -48,6 +48,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => api.interceptors.request.eject(interceptorId);
   }, []);
 
+  useLayoutEffect(() => {
+    const interceptorId = api.interceptors.response.use(
+      response => response,
+      error => {
+        const accessToken = localStorage.getItem('smartorder:accessToken');
+
+        if (accessToken && error.response?.status === 401) {
+          localStorage.clear();
+          setIsAuthenticated(false);
+        }
+
+        return Promise.reject(error);
+      },
+    );
+
+    return () => api.interceptors.response.eject(interceptorId);
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
 
