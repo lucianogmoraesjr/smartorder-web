@@ -61,7 +61,7 @@ export function Products() {
       >
         <DeleteProductContainer>
           <img
-            src={`http://localhost:3333/tmp/${selectedProduct.imagePath}`}
+            src={selectedProduct.imagePath}
             alt={`Imagem de ${selectedProduct.name}`}
           />
 
