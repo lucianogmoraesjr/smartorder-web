@@ -1,22 +1,80 @@
+import { useState } from 'react';
+
+import { Button } from '@/components/Button';
+import RefreshIcon from '@/components/Icons/RefreshIcon';
+import { Modal } from '@/components/Modal';
+import { useOrders } from '@/hooks/useOrders';
+
 import { Header } from '../../components/Header';
 import HomeIcon from '../../components/Icons/HomeIcon';
 import { Orders } from '../../components/Orders';
-import { OrdersProvider } from '../../contexts/OrdersContext';
 
-import { Container } from './styles';
+import { Container, ModalActions, ModalBody } from './styles';
 
 export function Home() {
+  const [isArchiveAllModalOpen, setIsArchiveAllModalOpen] = useState(false);
+
+  const { handleArchiveAll: onArchiveAll } = useOrders();
+
+  function handleOpenArchiveModal() {
+    setIsArchiveAllModalOpen(true);
+  }
+
+  function handleCloseArchiveModal() {
+    setIsArchiveAllModalOpen(false);
+  }
+
+  function handleArchiveAll() {
+    onArchiveAll();
+    handleCloseArchiveModal();
+  }
+
   return (
-    <OrdersProvider>
+    <>
       <Container>
         <Header
           title="Home"
           subtitle="Acompanhe os pedidos dos clientes"
           icon={HomeIcon}
-        />
+        >
+          <Button $variant="secondary" onClick={handleOpenArchiveModal}>
+            <RefreshIcon />
+            Reiniciar o dia
+          </Button>
+        </Header>
 
         <Orders />
       </Container>
-    </OrdersProvider>
+
+      <Modal
+        isVisible={isArchiveAllModalOpen}
+        icon={RefreshIcon}
+        title="Reiniciar o dia"
+        onClose={handleCloseArchiveModal}
+        containerId="archive-recent"
+      >
+        <ModalBody>
+          <p>
+            Ao reiniciar o dia, todos os pedidos serão arquivados no status
+            atual.
+          </p>
+          <p>Deseja reiniciar o dia?</p>
+        </ModalBody>
+
+        <ModalActions>
+          <Button
+            type="button"
+            $variant="secondary"
+            onClick={handleCloseArchiveModal}
+          >
+            Não, continuar pedidos
+          </Button>
+
+          <Button type="button" onClick={handleArchiveAll}>
+            Sim, reiniciar o dia
+          </Button>
+        </ModalActions>
+      </Modal>
+    </>
   );
 }

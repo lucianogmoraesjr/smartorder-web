@@ -1,5 +1,11 @@
 import { CanceledError } from 'axios';
-import { ReactNode, createContext, useEffect, useState } from 'react';
+import {
+  ReactNode,
+  createContext,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import { toast } from 'react-toastify';
 
 import { Order } from '../@types/Order';
@@ -10,6 +16,7 @@ interface IOrdersContextData {
   orders: Order[];
   handleCancelOrder: (orderId: string) => void;
   handleUpdateOrderStatus: (orderId: string, status: Order['status']) => void;
+  handleArchiveAll: () => Promise<void>;
 }
 
 interface OrdersProviderProps {
@@ -65,12 +72,20 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
     setOrders(prevState => prevState.filter(order => order.id !== orderId));
   }
 
+  const handleArchiveAll = useCallback(async () => {
+    const ordersToArchive = orders.map(order => order.id);
+
+    await OrdersService.archiveAll(ordersToArchive);
+    setOrders([]);
+  }, [orders]);
+
   return (
     <OrdersContext.Provider
       value={{
         orders,
         handleCancelOrder,
         handleUpdateOrderStatus,
+        handleArchiveAll,
       }}
     >
       {children}

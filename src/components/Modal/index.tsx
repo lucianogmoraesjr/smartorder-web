@@ -1,4 +1,4 @@
-import { ReactNode, useEffect } from 'react';
+import { ComponentType, ReactNode, useEffect } from 'react';
 
 import CloseIcon from '../Icons/CloseIcon';
 import { ReactPortal } from '../ReactPortal';
@@ -11,6 +11,7 @@ interface ModalProps {
   children: ReactNode;
   containerId?: string;
   overlay?: 'normal' | 'light';
+  icon?: ComponentType;
   onClose: () => void;
 }
 
@@ -20,6 +21,7 @@ export function Modal({
   children,
   containerId = 'modal-root',
   overlay = 'normal',
+  icon: Icon,
   onClose,
 }: ModalProps) {
   useEffect(() => {
@@ -43,7 +45,10 @@ export function Modal({
       <Overlay onClick={onClose} $overlay={overlay}>
         <ModalContainer onClick={e => e.stopPropagation()}>
           <ModalHeader>
-            <strong>{title}</strong>
+            <div className="title-container">
+              {Icon && <Icon />}
+              <strong>{title}</strong>
+            </div>
 
             <button type="button" onClick={onClose}>
               <CloseIcon />

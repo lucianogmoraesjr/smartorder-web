@@ -32,8 +32,24 @@ export const ModalHeader = styled.header`
   align-items: center;
   justify-content: space-between;
 
-  strong {
-    font-size: 1.5rem;
+  .title-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+
+      path {
+        stroke: ${({ theme }) => theme.colors.gray[400]};
+      }
+    }
+
+    strong {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
   }
 
   button {

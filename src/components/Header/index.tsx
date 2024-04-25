@@ -1,4 +1,4 @@
-import { ComponentType } from 'react';
+import { ComponentType, ReactNode } from 'react';
 
 import { Container, Content, Title } from './styles';
 
@@ -6,9 +6,10 @@ interface HeaderProps {
   title: string;
   subtitle: string;
   icon: ComponentType;
+  children?: ReactNode;
 }
 
-export function Header({ title, subtitle, icon: Icon }: HeaderProps) {
+export function Header({ title, subtitle, icon: Icon, children }: HeaderProps) {
   return (
     <Container>
       <Content>
@@ -20,6 +21,8 @@ export function Header({ title, subtitle, icon: Icon }: HeaderProps) {
 
           <h2>{subtitle}</h2>
         </div>
+
+        {children}
       </Content>
     </Container>
   );

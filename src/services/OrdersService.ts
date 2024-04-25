@@ -16,6 +16,12 @@ class OrdersService {
       signal,
     });
   }
+
+  archiveAll(ids: string[]) {
+    return this.api.patch('history/archive-recent', {
+      orderIds: ids,
+    });
+  }
 }
 
 export default new OrdersService();

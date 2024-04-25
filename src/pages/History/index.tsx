@@ -1,10 +1,10 @@
 import { CanceledError } from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
 
-import { Order } from '@/@types/Order';
 import { Header } from '@/components/Header';
+import EyeIcon from '@/components/Icons/EyeIcon';
 import HistoryIcon from '@/components/Icons/HistoryIcon';
-import PencilIcon from '@/components/Icons/PencilIcon';
 import TrashIcon from '@/components/Icons/TrashIcon';
 import { Table } from '@/components/Table';
 import { TableHeader } from '@/components/Table/TableHeader';
@@ -13,13 +13,14 @@ import { currencyFormatter } from '@/utils/currencyFormatter';
 
 import { Container } from './styles';
 
-type ArchivedOrder = Order & {
+interface ArchivedOrder {
+  id: string;
+  table: number;
+  createdAt: Date;
   products: Array<{
     quantity: number;
     product: {
-      id: string;
       name: string;
-      imagePath: string;
       priceInCents: number;
       category: {
         emoji: string;
@@ -27,7 +28,7 @@ type ArchivedOrder = Order & {
       };
     };
   }>;
-};
+}
 
 export function History() {
   const [archivedOrders, setArchivedOrders] = useState<ArchivedOrder[]>([]);
@@ -42,15 +43,58 @@ export function History() {
         setArchivedOrders(data);
       } catch (error) {
         if (error instanceof CanceledError) return;
+
+        toast.error('Ocorreu um erro ao listar os pedidos arquivados!');
       }
     }
 
     fetchHistory();
 
     return () => controller.abort();
-  });
+  }, []);
 
   const { format } = currencyFormatter();
+
+  const formattedArchivedOrders = useMemo(() => {
+    const formatted = archivedOrders.map(
+      ({ id, table, createdAt, products }) => {
+        const formattedCreatedAt = new Intl.DateTimeFormat('pt-BR').format(
+          new Date(createdAt),
+        );
+
+        let firstTwoProductNames = products
+          .slice(0, 2)
+          .map(({ product }) => product.name)
+          .join(', ');
+
+        if (products.length > 2) {
+          firstTwoProductNames = firstTwoProductNames.concat('...');
+        }
+
+        const firstProductCategory = products[0].product.category;
+
+        const firstProductCategoryName = `${firstProductCategory.emoji} ${firstProductCategory.name}`;
+
+        const orderTotalInCents = products.reduce(
+          (acc, { product, quantity }) => acc + quantity * product.priceInCents,
+          0,
+        );
+
+        const formattedPrice = format(orderTotalInCents);
+
+        return {
+          id,
+          table,
+          formattedCreatedAt,
+          firstTwoProductNames,
+          firstProductCategoryName,
+          formattedPrice,
+        };
+      },
+    );
+
+    return formatted;
+  }, [archivedOrders, format]);
 
   return (
     <Container>
@@ -60,7 +104,7 @@ export function History() {
         subtitle="Visualize pedidos anteriores"
       />
 
-      <TableHeader title="Pedidos" length={archivedOrders.length} />
+      <TableHeader title="Pedidos" length={formattedArchivedOrders.length} />
 
       <Table>
         <thead>
@@ -75,26 +119,17 @@ export function History() {
         </thead>
 
         <tbody>
-          {archivedOrders.map(archivedOrder => (
+          {formattedArchivedOrders.map(archivedOrder => (
             <tr key={archivedOrder.id}>
               <td>{archivedOrder.table}</td>
-              <td>
-                {new Intl.DateTimeFormat('pt-BR').format(
-                  new Date(archivedOrder.createdAt),
-                )}
-              </td>
-              <td>{archivedOrder.products[0].product.name}</td>
-              <td>{`${archivedOrder.products[0].product.category.emoji} ${archivedOrder.products[0].product.category.name}`}</td>
-              <td>
-                {format(
-                  archivedOrder.products[0].quantity *
-                    archivedOrder.products[0].product.priceInCents,
-                )}
-              </td>
+              <td>{archivedOrder.formattedCreatedAt}</td>
+              <td>{archivedOrder.firstTwoProductNames}</td>
+              <td>{archivedOrder.firstProductCategoryName}</td>
+              <td>{archivedOrder.formattedPrice}</td>
               <td>
                 <div className="actions">
                   <button type="button" onClick={() => {}}>
-                    <PencilIcon />
+                    <EyeIcon />
                   </button>
 
                   <button type="button" onClick={() => {}}>
