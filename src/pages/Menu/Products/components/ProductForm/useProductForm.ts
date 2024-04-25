@@ -12,7 +12,11 @@ import CategoriesService from '@/services/CategoriesService';
 import IngredientsService from '@/services/IngredientsService';
 
 const productFormSchema = z.object({
-  image: z.instanceof(FileList).transform(list => list.item(0)),
+  image: z
+    .instanceof(FileList)
+    .refine(files => !!files.item(0), 'Imagem é obrigatório')
+    .transform(files => files.item(0))
+    .or(z.null()),
   name: z.string().min(1, 'Nome é obrigatório'),
   priceInCents: z
     .number({ required_error: 'Preço é obrigatório' })
@@ -62,14 +66,6 @@ export function useProductForm(product?: Product) {
       }
     }
 
-    fetchCategories();
-
-    return () => controller.abort();
-  }, []);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
     async function fetchIngredients() {
       try {
         const ingredientsList = await IngredientsService.listIngredients(
@@ -86,6 +82,7 @@ export function useProductForm(product?: Product) {
       }
     }
 
+    fetchCategories();
     fetchIngredients();
 
     return () => controller.abort();
@@ -113,15 +110,20 @@ export function useProductForm(product?: Product) {
     watch,
     resetField,
     control,
+    setError,
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
     defaultValues: {
-      name: product?.name,
-      description: product?.description,
-      priceInCents: product?.priceInCents,
-      categoryId: product?.category.id,
-      ingredients: product?.ingredients?.map(ingredient => ingredient.id) ?? [],
+      ingredients: [],
+    },
+    values: product && {
+      name: product.name,
+      description: product.description,
+      priceInCents: product.priceInCents,
+      categoryId: product.category?.id,
+      image: null,
+      ingredients: product.ingredients?.map(ingredient => ingredient.id),
     },
   });
 
@@ -144,6 +146,7 @@ export function useProductForm(product?: Product) {
     handleSubmit,
     register,
     resetField,
+    setError,
     handleOpenNewIngredientModal,
     handleSearchTermChange,
   };

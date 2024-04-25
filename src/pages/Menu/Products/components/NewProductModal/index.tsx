@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 import { Product } from '@/@types/Product';
@@ -21,35 +23,59 @@ export function NewProductModal({
   onClose,
   onNewProduct,
 }: NewProductModalProps) {
-  async function handleSubmit(data: ProductFormData) {
-    try {
-      let fileName = '';
+  const [isSubmittingSuccessful, setIsSubmittingSuccessful] = useState(false);
+  const [fileName, setFileName] = useState('');
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
 
-      if (data.image) {
-        const { name: originalFileName, type: contentType } = data.image;
-
-        fileName = `${Date.now()}-${originalFileName}`;
-
+  useEffect(() => {
+    async function uploadImage() {
+      if (isSubmittingSuccessful && fileToUpload !== null) {
         const { signedUrl } = await UploadService.getSignedUrl(fileName);
 
-        await UploadService.uploadFile(signedUrl, data.image, contentType);
+        await UploadService.uploadFile(
+          signedUrl,
+          fileToUpload,
+          fileToUpload.type,
+        );
+
+        toast.success('Produto cadastrado com sucesso!');
+        onClose();
       }
+    }
+
+    uploadImage();
+  }, [isSubmittingSuccessful, fileName, fileToUpload, onClose]);
+
+  async function handleSubmit(data: ProductFormData) {
+    try {
+      if (!data.image) return;
+
+      const { name: originalFileName } = data.image;
+
+      const generatedUniqueFileName = `${Date.now()}-${originalFileName}`;
+
+      setFileName(generatedUniqueFileName);
+
+      setFileToUpload(data.image);
 
       const newProduct = await ProductsService.createProduct({
         name: data.name,
         description: data.description,
         priceInCents: data.priceInCents,
-        imagePath: fileName,
+        imagePath: generatedUniqueFileName,
         categoryId: data.categoryId,
         ingredients: data.ingredients,
       });
 
+      setIsSubmittingSuccessful(true);
       onNewProduct(newProduct);
-      toast.success('Produto cadastrado com sucesso!');
-    } catch {
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+        return;
+      }
+
       toast.error('Ocorreu um erro ao cadastrar o produto!');
-    } finally {
-      onClose();
     }
   }
 

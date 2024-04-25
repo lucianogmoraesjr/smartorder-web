@@ -38,7 +38,7 @@ class ProductsService {
   }
 
   async getProductById(id: string, signal?: AbortSignal) {
-    const { data } = await this.api.get(`products/${id}`, {
+    const { data } = await this.api.get<Product>(`products/${id}`, {
       signal,
     });
 

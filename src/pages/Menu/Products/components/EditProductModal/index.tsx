@@ -1,4 +1,4 @@
-import { CanceledError } from 'axios';
+import { AxiosError, CanceledError } from 'axios';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -26,7 +26,10 @@ export function EditProductModal({
   onClose,
   onUpdate,
 }: EditProductModalProps) {
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product>({} as Product);
+  const [isSubmittingSuccessful, setIsSubmittingSuccessful] = useState(false);
+  const [fileName, setFileName] = useState('');
+  const [fileToUpload, setFileToUpload] = useState<File | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -38,7 +41,12 @@ export function EditProductModal({
           controller.signal,
         );
 
+        const imageUrl = new URL(product.imagePath);
+
+        const imagePath = imageUrl.pathname.slice(1);
+
         setProduct(product);
+        setFileName(imagePath);
       } catch (error) {
         if (error instanceof CanceledError) return;
 
@@ -51,45 +59,65 @@ export function EditProductModal({
     return () => controller.abort();
   }, [productId]);
 
-  async function handleSubmit(data: ProductFormData) {
-    try {
-      if (!product) {
-        toast.error('Ocorreu um erro ao editar o produto!');
-        return;
-      }
-
-      let fileName = product.imagePath;
-
-      if (data.image) {
-        const { name: originalFileName, type: contentType } = data.image;
-
-        fileName = `${Date.now()}-${originalFileName}`;
-
+  useEffect(() => {
+    async function uploadImage() {
+      if (isSubmittingSuccessful && fileToUpload !== null) {
         const { signedUrl } = await UploadService.getSignedUrl(fileName);
 
-        await UploadService.uploadFile(signedUrl, data.image, contentType);
+        await UploadService.uploadFile(
+          signedUrl,
+          fileToUpload,
+          fileToUpload.type,
+        );
+
+        toast.success('Produto atualizado com sucesso!');
+        onClose();
+      }
+    }
+
+    uploadImage();
+  }, [isSubmittingSuccessful, fileName, fileToUpload, onClose]);
+
+  async function handleSubmit(data: ProductFormData) {
+    try {
+      let shouldCloseModal = true;
+      let imagePath = fileName;
+
+      if (data.image) {
+        const { name: originalFileName } = data.image;
+
+        imagePath = `${Date.now()}-${originalFileName}`;
+
+        setFileName(imagePath);
+        setFileToUpload(data.image);
+
+        shouldCloseModal = false;
       }
 
       const updatedProduct = await ProductsService.updateProduct(product.id, {
         name: data.name,
         description: data.description,
         priceInCents: data.priceInCents,
-        imagePath: fileName,
+        imagePath: imagePath,
         categoryId: data.categoryId,
         ingredients: data.ingredients,
       });
 
+      setIsSubmittingSuccessful(true);
       onUpdate(updatedProduct);
-      toast.success('Produto atualizado com sucesso!');
-    } catch {
-      toast.error('Ocorreu um erro ao editar o produto!');
-    } finally {
-      onClose();
-    }
-  }
 
-  if (!product) {
-    return;
+      if (shouldCloseModal) {
+        toast.success('Produto atualizado com sucesso!');
+        onClose();
+      }
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(error.response?.data.message);
+        return;
+      }
+
+      toast.error('Ocorreu um erro ao editar o produto!');
+    }
   }
 
   return (

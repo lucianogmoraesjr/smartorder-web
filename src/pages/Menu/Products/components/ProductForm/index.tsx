@@ -66,6 +66,8 @@ export function ProductForm({ onSubmit, children, product }: ProductFormProps) {
             <ImageInputWrapper>
               <strong>Imagem</strong>
 
+              {errors.image && <span>{errors.image.message}</span>}
+
               <div>
                 <ImagePicker
                   imagePath={product?.imagePath}
