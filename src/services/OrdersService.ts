@@ -17,10 +17,18 @@ class OrdersService {
     });
   }
 
+  getOrderById(id: string, signal?: AbortSignal) {
+    return this.api.get<Order>(`orders/${id}`, { signal });
+  }
+
   archiveAll(ids: string[]) {
     return this.api.patch('history/archive-recent', {
       orderIds: ids,
     });
+  }
+
+  deleteOrder(id: string) {
+    return this.api.delete(`orders/${id}`);
   }
 }
 

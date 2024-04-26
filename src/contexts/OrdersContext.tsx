@@ -14,9 +14,9 @@ import { webSocketClient } from '../services/webSocketClient';
 
 interface IOrdersContextData {
   orders: Order[];
-  handleCancelOrder: (orderId: string) => void;
+  handleDeleteOrder: (orderId: string) => void;
   handleUpdateOrderStatus: (orderId: string, status: Order['status']) => void;
-  handleArchiveAll: () => Promise<void>;
+  handleArchiveAll: () => void;
 }
 
 interface OrdersProviderProps {
@@ -68,22 +68,19 @@ export function OrdersProvider({ children }: OrdersProviderProps) {
     );
   }
 
-  function handleCancelOrder(orderId: string) {
+  const handleDeleteOrder = useCallback((orderId: string) => {
     setOrders(prevState => prevState.filter(order => order.id !== orderId));
-  }
+  }, []);
 
-  const handleArchiveAll = useCallback(async () => {
-    const ordersToArchive = orders.map(order => order.id);
-
-    await OrdersService.archiveAll(ordersToArchive);
+  const handleArchiveAll = useCallback(() => {
     setOrders([]);
-  }, [orders]);
+  }, []);
 
   return (
     <OrdersContext.Provider
       value={{
         orders,
-        handleCancelOrder,
+        handleDeleteOrder,
         handleUpdateOrderStatus,
         handleArchiveAll,
       }}

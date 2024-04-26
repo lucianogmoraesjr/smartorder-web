@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+
+import OrdersService from '@/services/OrdersService';
 
 import { Order } from '../../@types/Order';
 import { useOrders } from '../../hooks/useOrders';
@@ -18,12 +20,8 @@ interface OrderModalProps {
 export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const { handleUpdateOrderStatus, handleCancelOrder: cancelOrder } =
+  const { handleUpdateOrderStatus, handleDeleteOrder: onCancelOrder } =
     useOrders();
-
-  if (!order) {
-    return null;
-  }
 
   async function handleChangeOrderStatus() {
     if (!order) {
@@ -49,19 +47,31 @@ export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
 
     setIsLoading(true);
 
-    await api.delete(`orders/${order.id}`);
+    await OrdersService.deleteOrder(order.id);
 
+    onCancelOrder(order.id);
     toast.success(`O pedido da mesa ${order.table} foi cancelado!`);
-    cancelOrder(order.id);
     setIsLoading(false);
     onCloseModal();
   }
 
-  const total = order.products.reduce((acc, { product, quantity }) => {
-    acc += product.priceInCents * quantity;
+  const totalInCents = useMemo(() => {
+    if (!order) {
+      return null;
+    }
 
-    return acc;
-  }, 0);
+    const total = order.products.reduce((acc, { product, quantity }) => {
+      acc += product.priceInCents * quantity;
+
+      return acc;
+    }, 0);
+
+    return total;
+  }, [order]);
+
+  if (!order) {
+    return null;
+  }
 
   const ordersWaiting = order.status === 'WAITING';
   const ordersInProduction = order.status === 'IN_PRODUCTION';
@@ -115,7 +125,7 @@ export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
 
         <div className="total">
           <span>Total</span>
-          <strong>{formatCurrency(total)}</strong>
+          <strong>{formatCurrency(totalInCents)}</strong>
         </div>
       </OrderDetails>
 

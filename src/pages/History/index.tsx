@@ -1,16 +1,20 @@
 import { CanceledError } from 'axios';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { DeleteModal } from '@/components/DeleteModal';
 import { Header } from '@/components/Header';
 import EyeIcon from '@/components/Icons/EyeIcon';
 import HistoryIcon from '@/components/Icons/HistoryIcon';
 import TrashIcon from '@/components/Icons/TrashIcon';
 import { Table } from '@/components/Table';
 import { TableHeader } from '@/components/Table/TableHeader';
+import { useOrders } from '@/hooks/useOrders';
 import HistoryService from '@/services/HistoryService';
+import OrdersService from '@/services/OrdersService';
 import { currencyFormatter } from '@/utils/currencyFormatter';
 
+import { ArchivedOrderModal } from './components/ArchivedOrderModal';
 import { Container } from './styles';
 
 interface ArchivedOrder {
@@ -32,6 +36,11 @@ interface ArchivedOrder {
 
 export function History() {
   const [archivedOrders, setArchivedOrders] = useState<ArchivedOrder[]>([]);
+  const [selectedOrderId, setSelectedOrderId] = useState('');
+
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isArchivedOrderModalOpen, setIsArchivedOrderModalOpen] =
+    useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -96,51 +105,113 @@ export function History() {
     return formatted;
   }, [archivedOrders, format]);
 
+  const { handleDeleteOrder: onDeleteOrder } = useOrders();
+
+  function handleOpenArchivedOrderModal(orderId: string) {
+    setSelectedOrderId(orderId);
+    setIsArchivedOrderModalOpen(true);
+  }
+
+  const handleCloseAArchivedOrderModal = useCallback(() => {
+    setIsArchivedOrderModalOpen(false);
+  }, []);
+
+  function handleOpenDeleteModal(orderId: string) {
+    setSelectedOrderId(orderId);
+    setIsDeleteModalOpen(true);
+  }
+
+  const handleCloseDeleteModal = useCallback(() => {
+    setIsDeleteModalOpen(false);
+  }, []);
+
+  async function handleDeleteOrder() {
+    try {
+      await OrdersService.deleteOrder(selectedOrderId);
+
+      onDeleteOrder(selectedOrderId);
+      toast.success('Registro removido com sucesso!');
+    } catch {
+      toast.error('Ocorreu um erro ao remover o registro!');
+    } finally {
+      handleCloseDeleteModal();
+    }
+  }
+
   return (
-    <Container>
-      <Header
-        icon={HistoryIcon}
-        title="Histórico"
-        subtitle="Visualize pedidos anteriores"
+    <>
+      {isArchivedOrderModalOpen && (
+        <ArchivedOrderModal
+          isVisible={isArchivedOrderModalOpen}
+          orderId={selectedOrderId}
+          onClose={handleCloseAArchivedOrderModal}
+          onOpenDeleteModal={handleOpenDeleteModal}
+        />
+      )}
+
+      <DeleteModal
+        isVisible={isDeleteModalOpen}
+        title="Excluir Registro"
+        confirmText="Tem certeza que deseja excluir o registro?"
+        confirmLabel="Excluir Registro"
+        cancelLabel="Manter Registro"
+        onClose={handleCloseDeleteModal}
+        onConfirm={handleDeleteOrder}
       />
 
-      <TableHeader title="Pedidos" length={formattedArchivedOrders.length} />
+      <Container>
+        <Header
+          icon={HistoryIcon}
+          title="Histórico"
+          subtitle="Visualize pedidos anteriores"
+        />
 
-      <Table>
-        <thead>
-          <tr>
-            <th>Mesa</th>
-            <th>Data</th>
-            <th>Nome</th>
-            <th>Categoria</th>
-            <th>Total</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
+        <TableHeader title="Pedidos" length={formattedArchivedOrders.length} />
 
-        <tbody>
-          {formattedArchivedOrders.map(archivedOrder => (
-            <tr key={archivedOrder.id}>
-              <td>{archivedOrder.table}</td>
-              <td>{archivedOrder.formattedCreatedAt}</td>
-              <td>{archivedOrder.firstTwoProductNames}</td>
-              <td>{archivedOrder.firstProductCategoryName}</td>
-              <td>{archivedOrder.formattedPrice}</td>
-              <td>
-                <div className="actions">
-                  <button type="button" onClick={() => {}}>
-                    <EyeIcon />
-                  </button>
-
-                  <button type="button" onClick={() => {}}>
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
+        <Table>
+          <thead>
+            <tr>
+              <th>Mesa</th>
+              <th>Data</th>
+              <th>Nome</th>
+              <th>Categoria</th>
+              <th>Total</th>
+              <th>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </Container>
+          </thead>
+
+          <tbody>
+            {formattedArchivedOrders.map(archivedOrder => (
+              <tr key={archivedOrder.id}>
+                <td>{archivedOrder.table}</td>
+                <td>{archivedOrder.formattedCreatedAt}</td>
+                <td>{archivedOrder.firstTwoProductNames}</td>
+                <td>{archivedOrder.firstProductCategoryName}</td>
+                <td>{archivedOrder.formattedPrice}</td>
+                <td>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        handleOpenArchivedOrderModal(archivedOrder.id)
+                      }
+                    >
+                      <EyeIcon />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleOpenDeleteModal(archivedOrder.id)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Container>
+    </>
   );
 }

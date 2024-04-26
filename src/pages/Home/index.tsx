@@ -4,6 +4,7 @@ import { Button } from '@/components/Button';
 import RefreshIcon from '@/components/Icons/RefreshIcon';
 import { Modal } from '@/components/Modal';
 import { useOrders } from '@/hooks/useOrders';
+import OrdersService from '@/services/OrdersService';
 
 import { Header } from '../../components/Header';
 import HomeIcon from '../../components/Icons/HomeIcon';
@@ -14,7 +15,7 @@ import { Container, ModalActions, ModalBody } from './styles';
 export function Home() {
   const [isArchiveAllModalOpen, setIsArchiveAllModalOpen] = useState(false);
 
-  const { handleArchiveAll: onArchiveAll } = useOrders();
+  const { orders, handleArchiveAll: onArchiveAll } = useOrders();
 
   function handleOpenArchiveModal() {
     setIsArchiveAllModalOpen(true);
@@ -24,7 +25,11 @@ export function Home() {
     setIsArchiveAllModalOpen(false);
   }
 
-  function handleArchiveAll() {
+  async function handleArchiveAll() {
+    const ordersToArchive = orders.map(order => order.id);
+
+    await OrdersService.archiveAll(ordersToArchive);
+
     onArchiveAll();
     handleCloseArchiveModal();
   }
