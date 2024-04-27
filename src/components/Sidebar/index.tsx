@@ -5,16 +5,9 @@ import HistoryIcon from '../Icons/HistoryIcon';
 import HomeIcon from '../Icons/HomeIcon';
 import LogoutIcon from '../Icons/LogoutIcon';
 import MenuIcon from '../Icons/MenuIcon';
-import ProfileIcon from '../Icons/ProfileIcon';
 import UsersIcon from '../Icons/UsersIcon';
 
-import {
-  Container,
-  Logo,
-  NavContainer,
-  NavItem,
-  ProfileContainer,
-} from './styles';
+import { Container, Logo, NavContainer, NavItem } from './styles';
 
 export function Sidebar() {
   const { signOut, user } = useAuth();
@@ -64,19 +57,10 @@ export function Sidebar() {
         )}
       </NavContainer>
 
-      <ProfileContainer>
-        <NavItem>
-          <a href="/">
-            <ProfileIcon />
-            Meu perfil
-          </a>
-        </NavItem>
-
-        <button type="button" onClick={handleLogout}>
-          <LogoutIcon />
-          Sair
-        </button>
-      </ProfileContainer>
+      <button type="button" onClick={handleLogout}>
+        <LogoutIcon />
+        Sair
+      </button>
     </Container>
   );
 }

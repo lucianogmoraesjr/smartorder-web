@@ -10,6 +10,22 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 2.5rem 0;
+
+  button {
+    all: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: ${({ theme }) => theme.colors.gray[400]};
+
+    cursor: pointer;
+
+    img {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
 `;
 
 export const Logo = styled.div`
@@ -78,28 +94,6 @@ export const NavItem = styled.nav`
           stroke: ${({ theme }) => theme.colors.red.main};
         }
       }
-    }
-  }
-`;
-
-export const ProfileContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-
-  button {
-    all: unset;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    color: ${({ theme }) => theme.colors.gray[400]};
-
-    cursor: pointer;
-
-    img {
-      width: 1.125rem;
-      height: 1.125rem;
     }
   }
 `;
