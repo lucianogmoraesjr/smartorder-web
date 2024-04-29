@@ -18,14 +18,14 @@ export const Header = styled.header`
     }
 
     span {
-      font-weight: 400;
+      font-weight: 500;
       font-size: 1rem;
     }
   }
 
   > button {
     all: unset;
-    color: #d73035;
+    color: ${({ theme }) => theme.colors.red.main};
     font-size: 0.875rem;
     font-weight: 600;
     line-height: 1.5;

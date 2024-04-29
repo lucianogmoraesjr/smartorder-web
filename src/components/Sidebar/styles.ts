@@ -10,11 +10,27 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 2.5rem 0;
+
+  button {
+    all: unset;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: ${({ theme }) => theme.colors.gray[400]};
+
+    cursor: pointer;
+
+    img {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
 `;
 
 export const Logo = styled.div`
   font-size: 1.5rem;
-  color: #666;
+  color: ${({ theme }) => theme.colors.gray[400]};
 
   strong {
     font-weight: 700;
@@ -40,7 +56,7 @@ export const NavItem = styled.nav`
     gap: 0.5rem;
 
     text-decoration: none;
-    color: #666;
+    color: ${({ theme }) => theme.colors.gray[400]};
     font-size: 0.875rem;
     line-height: 1.4;
     font-weight: 500;
@@ -50,16 +66,16 @@ export const NavItem = styled.nav`
       height: 1.125rem;
 
       path {
-        stroke: #666;
+        stroke: ${({ theme }) => theme.colors.gray[400]};
       }
     }
 
     &.active {
-      color: #d73035;
+      color: ${({ theme }) => theme.colors.red.main};
 
       &::after {
         content: '';
-        background: #d73035;
+        background: ${({ theme }) => theme.colors.red.main};
         position: absolute;
         bottom: -0.5rem;
         left: 50%;
@@ -70,32 +86,14 @@ export const NavItem = styled.nav`
       }
 
       svg {
+        circle {
+          stroke: ${({ theme }) => theme.colors.red.main};
+        }
+
         path {
-          stroke: #d73035;
+          stroke: ${({ theme }) => theme.colors.red.main};
         }
       }
-    }
-  }
-`;
-
-export const ProfileContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
-
-  button {
-    all: unset;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    color: #666;
-
-    cursor: pointer;
-
-    img {
-      width: 1.125rem;
-      height: 1.125rem;
     }
   }
 `;

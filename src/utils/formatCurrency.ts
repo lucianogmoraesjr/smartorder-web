@@ -1,6 +1,10 @@
-export function formatCurrency(value: number) {
-  return new Intl.NumberFormat('pt-br', {
+export function formatCurrency(valueInCents: number | null) {
+  if (valueInCents === null || isNaN(valueInCents)) {
+    return '';
+  }
+
+  return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
-  }).format(value);
+  }).format(valueInCents / 100);
 }

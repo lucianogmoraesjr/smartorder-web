@@ -1,21 +1,23 @@
 import { NavLink } from 'react-router-dom';
 
+import { useAuth } from '../../hooks/useAuth';
 import HistoryIcon from '../Icons/HistoryIcon';
 import HomeIcon from '../Icons/HomeIcon';
 import LogoutIcon from '../Icons/LogoutIcon';
 import MenuIcon from '../Icons/MenuIcon';
-import ProfileIcon from '../Icons/ProfileIcon';
 import UsersIcon from '../Icons/UsersIcon';
 
-import {
-  Container,
-  Logo,
-  NavContainer,
-  NavItem,
-  ProfileContainer,
-} from './styles';
+import { Container, Logo, NavContainer, NavItem } from './styles';
 
 export function Sidebar() {
+  const { signOut, user } = useAuth();
+
+  function handleLogout() {
+    signOut();
+  }
+
+  const isAdmin = user.role === 'ADMIN';
+
   return (
     <Container>
       <Logo>
@@ -32,10 +34,10 @@ export function Sidebar() {
         </NavItem>
 
         <NavItem>
-          <a href="/">
+          <NavLink to="/history">
             <HistoryIcon />
             Histórico
-          </a>
+          </NavLink>
         </NavItem>
 
         <NavItem>
@@ -45,27 +47,20 @@ export function Sidebar() {
           </NavLink>
         </NavItem>
 
-        <NavItem>
-          <a href="/">
-            <UsersIcon />
-            Usuários
-          </a>
-        </NavItem>
+        {isAdmin && (
+          <NavItem>
+            <NavLink to="/users">
+              <UsersIcon />
+              Usuários
+            </NavLink>
+          </NavItem>
+        )}
       </NavContainer>
 
-      <ProfileContainer>
-        <NavItem>
-          <a href="/">
-            <ProfileIcon />
-            Meu perfil
-          </a>
-        </NavItem>
-
-        <button type="button">
-          <LogoutIcon />
-          Sair
-        </button>
-      </ProfileContainer>
+      <button type="button" onClick={handleLogout}>
+        <LogoutIcon />
+        Sair
+      </button>
     </Container>
   );
 }

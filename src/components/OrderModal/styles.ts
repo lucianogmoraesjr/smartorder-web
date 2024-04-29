@@ -41,7 +41,7 @@ export const OrderDetails = styled.div`
 
       .quantity {
         font-size: 0.875rem;
-        color: #666;
+        color: ${({ theme }) => theme.colors.gray[400]};
         display: block;
         min-width: 1.25rem;
         margin-left: 0.75rem;
@@ -57,7 +57,7 @@ export const OrderDetails = styled.div`
 
         span {
           font-size: 0.875rem;
-          color: #666;
+          color: ${({ theme }) => theme.colors.gray[400]};
         }
       }
     }
@@ -89,7 +89,7 @@ export const Actions = styled.footer`
   }
 
   .primary {
-    background: #d73035;
+    background: ${({ theme }) => theme.colors.red.main};
     border-radius: 999px;
     border: 0;
     color: #fff;
@@ -98,7 +98,7 @@ export const Actions = styled.footer`
 
   .cancel {
     all: unset;
-    color: #d73035;
+    color: ${({ theme }) => theme.colors.red.main};
     font-weight: bold;
     text-align: center;
     cursor: pointer;

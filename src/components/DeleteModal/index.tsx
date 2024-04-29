@@ -22,25 +22,31 @@ export function DeleteModal({
   confirmLabel,
   cancelLabel,
   isVisible,
+  children,
   onClose,
   onConfirm,
-  children,
 }: DeleteModalProps) {
   return (
-    <Modal title={title} isVisible={isVisible} onClose={onClose}>
+    <Modal
+      title={title}
+      isVisible={isVisible}
+      onClose={onClose}
+      containerId="delete-modal"
+    >
       <Container>
         {confirmText ? (
           <p>{confirmText}</p>
         ) : (
-          <p>'Tem certeza que deseja excluir?'</p>
+          <p>Tem certeza que deseja excluir?</p>
         )}
 
         {children}
 
         <Actions>
-          <Button $variant="secondary" onClick={onClose}>
+          <Button type="button" $variant="secondary" onClick={onClose}>
             {cancelLabel ? cancelLabel : 'Cancelar'}
           </Button>
+
           <Button onClick={onConfirm}>
             {confirmLabel ? confirmLabel : 'Excluir'}
           </Button>

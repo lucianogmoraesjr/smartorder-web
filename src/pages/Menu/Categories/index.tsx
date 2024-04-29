@@ -1,80 +1,55 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Category as CategoryComponent } from '@/components/Category';
+import { DeleteModal } from '@/components/DeleteModal';
+import PencilIcon from '@/components/Icons/PencilIcon';
+import TrashIcon from '@/components/Icons/TrashIcon';
+import { Table } from '@/components/Table';
+import { TableHeader } from '@/components/Table/TableHeader';
 
-import { Category as CategoryComponent } from '../../../components/Category';
-import { DeleteModal } from '../../../components/DeleteModal';
-import { EditCategoryModal } from '../../../components/EditCategoryModal';
-import PencilIcon from '../../../components/Icons/PencilIcon';
-import TrashIcon from '../../../components/Icons/TrashIcon';
-import { NewCategoryModal } from '../../../components/NewCategoryModal';
-import { Table } from '../../../components/Table';
-import { TableHeader } from '../../../components/Table/TableHeader';
-import { api } from '../../../services/api';
-import { Category } from '../../../types/Category';
-
+import { EditCategoryModal } from './components/EditCategoryModal';
+import { NewCategoryModal } from './components/NewCategoryModal';
 import { Container } from './styles';
+import { useCategories } from './useCategories';
 
 export function Categories() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [categoryBeingDeleted, setCategoryBeingDeleted] = useState<Category>(
-    {} as Category,
-  );
-  const [selectedCategory, setSelectedCategory] = useState<Category>(
-    {} as Category,
-  );
-  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [isEditCategoryModalVisible, setIsEditCategoryModalVisible] =
-    useState(false);
-  const [isNewCategoryModalVisible, setIsNewCategoryModalVisible] =
-    useState(false);
+  const {
+    categories,
+    selectedCategory,
+    isNewCategoryModalVisible,
+    isEditCategoryModalVisible,
+    isDeleteModalVisible,
+    user,
+    handleOpenNewCategoryModal,
+    handleCloseNewCategoryModal,
+    handleNewCategory,
+    handleOpenEditCategoryModal,
+    handleUpdatedCategory,
+    handleCloseEditCategoryModal,
+    handleCloseDeleteModal,
+    handleDeleteCategory,
+    handleConfirmDeleteCategory,
+  } = useCategories();
 
-  useEffect(() => {
-    api.get('categories').then(response => setCategories(response.data));
-  }, []);
-
-  function handleOpenNewCategoryModal() {
-    setIsNewCategoryModalVisible(true);
-  }
-
-  const handleCloseNewCategoryModal = useCallback(() => {
-    setIsNewCategoryModalVisible(false);
-  }, []);
-
-  function handleOpenEditCategoryModal(category: Category) {
-    setSelectedCategory(category);
-    setIsEditCategoryModalVisible(true);
-  }
-
-  const handleCloseEditCategoryModal = useCallback(() => {
-    setIsEditCategoryModalVisible(false);
-  }, []);
-
-  const handleCloseDeleteModal = useCallback(() => {
-    setIsDeleteModalVisible(false);
-  }, []);
-
-  function handleNewCategory(category: Category) {
-    setCategories(prevState => prevState.concat(category));
-  }
-
-  async function handleDeleteCategory(category: Category) {
-    setIsDeleteModalVisible(true);
-    setCategoryBeingDeleted(category);
-  }
+  const isAdmin = user.role === 'ADMIN';
 
   return (
     <Container>
-      <NewCategoryModal
-        isVisible={isNewCategoryModalVisible}
-        onClose={handleCloseNewCategoryModal}
-        onNewCategory={handleNewCategory}
-      />
+      {isNewCategoryModalVisible && (
+        <NewCategoryModal
+          isVisible={isNewCategoryModalVisible}
+          onClose={handleCloseNewCategoryModal}
+          onNewCategory={handleNewCategory}
+        />
+      )}
 
-      <EditCategoryModal
-        isVisible={isEditCategoryModalVisible}
-        category={selectedCategory}
-        onClose={handleCloseEditCategoryModal}
-        onDelete={handleDeleteCategory}
-      />
+      {isEditCategoryModalVisible && (
+        <EditCategoryModal
+          isVisible={isEditCategoryModalVisible}
+          categoryId={selectedCategory.id}
+          onClose={handleCloseEditCategoryModal}
+          onDelete={handleDeleteCategory}
+          onUpdate={handleUpdatedCategory}
+        />
+      )}
 
       <DeleteModal
         title="Excluir Categoria"
@@ -83,18 +58,20 @@ export function Categories() {
         confirmLabel="Excluir Categoria"
         isVisible={isDeleteModalVisible}
         onClose={handleCloseDeleteModal}
-        onConfirm={() => {}}
+        onConfirm={handleConfirmDeleteCategory}
       >
         <CategoryComponent
-          emoji={categoryBeingDeleted.emoji}
-          name={categoryBeingDeleted.name}
+          emoji={selectedCategory.emoji}
+          name={selectedCategory.name}
         />
       </DeleteModal>
 
       <TableHeader title="Categorias" length={categories.length}>
-        <button type="button" onClick={handleOpenNewCategoryModal}>
-          Nova categoria
-        </button>
+        {isAdmin && (
+          <button type="button" onClick={handleOpenNewCategoryModal}>
+            Nova categoria
+          </button>
+        )}
       </TableHeader>
 
       <Table>
@@ -102,7 +79,7 @@ export function Categories() {
           <tr>
             <th>Emoji</th>
             <th>Nome</th>
-            <th>Ações</th>
+            {isAdmin && <th>Ações</th>}
           </tr>
         </thead>
 
@@ -111,23 +88,26 @@ export function Categories() {
             <tr key={category.id}>
               <td>{category.emoji}</td>
               <td>{category.name}</td>
-              <td>
-                <div className="actions">
-                  <button
-                    type="button"
-                    onClick={() => handleOpenEditCategoryModal(category)}
-                  >
-                    <PencilIcon />
-                  </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteCategory(category)}
-                  >
-                    <TrashIcon />
-                  </button>
-                </div>
-              </td>
+              {isAdmin && (
+                <td>
+                  <div className="actions">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEditCategoryModal(category)}
+                    >
+                      <PencilIcon />
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteCategory(category.id)}
+                    >
+                      <TrashIcon />
+                    </button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>

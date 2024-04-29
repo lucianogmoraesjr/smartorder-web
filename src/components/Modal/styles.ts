@@ -1,12 +1,17 @@
 import { styled } from 'styled-components';
 
-export const Overlay = styled.div`
+interface OverlayProps {
+  $overlay?: 'normal' | 'light';
+}
+
+export const Overlay = styled.div<OverlayProps>`
   position: fixed;
   width: 100%;
   height: 100%;
   left: 0;
   top: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: ${({ $overlay = 'normal' }) =>
+    $overlay === 'normal' ? 'rgba(0, 0, 0, 0.8)' : 'rgba(0, 0, 0, 0.4)'};
   backdrop-filter: blur(4.5px);
   display: flex;
   align-items: center;
@@ -15,9 +20,11 @@ export const Overlay = styled.div`
 
 export const ModalContainer = styled.div`
   background: #fff;
-  width: 30rem;
+  min-width: 30rem;
+  max-height: 966px;
   border-radius: 0.5rem;
   padding: 2rem;
+  overflow-y: auto;
 `;
 
 export const ModalHeader = styled.header`
@@ -25,8 +32,24 @@ export const ModalHeader = styled.header`
   align-items: center;
   justify-content: space-between;
 
-  strong {
-    font-size: 1.5rem;
+  .title-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    svg {
+      width: 1.25rem;
+      height: 1.25rem;
+
+      path {
+        stroke: ${({ theme }) => theme.colors.gray[400]};
+      }
+    }
+
+    strong {
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
   }
 
   button {

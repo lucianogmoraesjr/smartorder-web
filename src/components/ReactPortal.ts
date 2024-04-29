@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import ReactDOM from 'react-dom';
+import * as ReactDOM from 'react-dom';
 
 interface ReactPortalProps {
   containerId: string;

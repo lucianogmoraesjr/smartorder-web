@@ -44,7 +44,7 @@ export const OrdersContainer = styled.div`
 
     span {
       font-size: 0.875rem;
-      color: #666;
+      color: ${({ theme }) => theme.colors.gray[400]};
     }
 
     & + button {

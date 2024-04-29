@@ -13,7 +13,13 @@ module.exports = {
   ignorePatterns: ['dist', '.eslintrc.cjs'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh', 'prettier'],
+  settings: {
+    'import/resolver': {
+      'typescript': {}
+    },
+  },
   rules: {
+    'no-empty': 'off',
     'react-refresh/only-export-components': [
       'warn',
       { allowConstantExport: true },

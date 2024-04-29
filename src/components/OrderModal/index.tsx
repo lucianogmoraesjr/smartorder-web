@@ -1,4 +1,11 @@
-import { Order } from '../../types/Order';
+import { useMemo, useState } from 'react';
+import { toast } from 'react-toastify';
+
+import OrdersService from '@/services/OrdersService';
+
+import { Order } from '../../@types/Order';
+import { useOrders } from '../../hooks/useOrders';
+import { api } from '../../services/api';
 import { formatCurrency } from '../../utils/formatCurrency';
 import { Modal } from '../Modal';
 
@@ -7,29 +14,69 @@ import { Actions, OrderDetails, StatusContainer } from './styles';
 interface OrderModalProps {
   visible: boolean;
   order: Order | null;
-  isLoading: boolean;
   onCloseModal: () => void;
-  onCancelOrder: () => void;
-  onChangeOrderStatus: () => void;
 }
 
-export function OrderModal({
-  visible,
-  order,
-  isLoading,
-  onCloseModal,
-  onCancelOrder,
-  onChangeOrderStatus,
-}: OrderModalProps) {
+export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { handleUpdateOrderStatus, handleDeleteOrder: onCancelOrder } =
+    useOrders();
+
+  async function handleChangeOrderStatus() {
+    if (!order) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    const status = order.status === 'WAITING' ? 'IN_PRODUCTION' : 'DONE';
+
+    await api.patch(`orders/${order.id}`, { status });
+
+    toast.success(`Status da mesa ${order.table} alterado com sucesso.`);
+    handleUpdateOrderStatus(order.id, status);
+    setIsLoading(false);
+    onCloseModal();
+  }
+
+  async function handleCancelOrder() {
+    if (!order) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    await OrdersService.deleteOrder(order.id);
+
+    onCancelOrder(order.id);
+    toast.success(`O pedido da mesa ${order.table} foi cancelado!`);
+    setIsLoading(false);
+    onCloseModal();
+  }
+
+  const totalInCents = useMemo(() => {
+    if (!order) {
+      return null;
+    }
+
+    const total = order.products.reduce((acc, { product, quantity }) => {
+      acc += product.priceInCents * quantity;
+
+      return acc;
+    }, 0);
+
+    return total;
+  }, [order]);
+
   if (!order) {
     return null;
   }
 
-  const total = order.products.reduce((acc, { product, quantity }) => {
-    acc += (product.priceInCents * quantity) / 100;
-
-    return acc;
-  }, 0);
+  const ordersWaiting = order.status === 'WAITING';
+  const ordersInProduction = order.status === 'IN_PRODUCTION';
+  const ordersDone = order.status === 'DONE';
+  const ordersDifferentThanDone = order.status !== 'DONE';
 
   return (
     <Modal
@@ -41,14 +88,14 @@ export function OrderModal({
         <small>Status do Pedido</small>
         <div>
           <span>
-            {order.status === 'WAITING' && '🕒'}
-            {order.status === 'IN_PRODUCTION' && '👨🏼‍🍳'}
-            {order.status === 'DONE' && '✅'}
+            {ordersWaiting && '🕒'}
+            {ordersInProduction && '👨🏼‍🍳'}
+            {ordersDone && '✅'}
           </span>
           <strong>
-            {order.status === 'WAITING' && 'Fila de espera'}
-            {order.status === 'IN_PRODUCTION' && 'Em produção'}
-            {order.status === 'DONE' && 'Pronto'}
+            {ordersWaiting && 'Fila de espera'}
+            {ordersInProduction && 'Em produção'}
+            {ordersDone && 'Pronto'}
           </strong>
         </div>
       </StatusContainer>
@@ -60,7 +107,7 @@ export function OrderModal({
           {order.products.map(({ product, quantity }) => (
             <div key={product.id} className="item">
               <img
-                src={`http://localhost:3333/tmp/${product.imagePath}`}
+                src={product.imagePath}
                 alt={product.name}
                 width={56}
                 height={28.51}
@@ -70,7 +117,7 @@ export function OrderModal({
 
               <div className="product-details">
                 <strong>{product.name}</strong>
-                <span>{formatCurrency(product.priceInCents / 100)}</span>
+                <span>{formatCurrency(product.priceInCents)}</span>
               </div>
             </div>
           ))}
@@ -78,7 +125,7 @@ export function OrderModal({
 
         <div className="total">
           <span>Total</span>
-          <strong>{formatCurrency(total)}</strong>
+          <strong>{formatCurrency(totalInCents)}</strong>
         </div>
       </OrderDetails>
 
@@ -86,22 +133,22 @@ export function OrderModal({
         <button
           type="button"
           className="cancel"
-          onClick={onCancelOrder}
+          onClick={handleCancelOrder}
           disabled={isLoading}
         >
           Cancelar pedido
         </button>
 
-        {order.status !== 'DONE' && (
+        {ordersDifferentThanDone && (
           <button
             type="button"
             className="primary"
-            onClick={onChangeOrderStatus}
+            onClick={handleChangeOrderStatus}
             disabled={isLoading}
           >
             <strong>
-              {order.status === 'WAITING' && 'Iniciar produção'}
-              {order.status === 'IN_PRODUCTION' && 'Concluir pedido'}
+              {ordersWaiting && 'Iniciar produção'}
+              {ordersInProduction && 'Concluir pedido'}
             </strong>
           </button>
         )}
