@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 
+import { Category } from '../../@types/Category';
 import { api } from '../../services/api';
-import { Category } from '../../types/Category';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import { Modal } from '../Modal';
