@@ -30,7 +30,13 @@ Aqui estão algumas das melhores features do projeto:
 * Edição de categorias já cadastradas
 * Deleção de categorias
 
-<h2>Fluxo da aplicação</h2>
+<h2>📽 Demonstração</h2>
+
+<p align="center">
+  <img alt="demo" src=".github/demo.gif" width="100%">
+</p>
+
+<h2>🔀 Fluxo da aplicação</h2>
 
 **1. Usuário Interage com o Aplicativo Mobile:**
   - O usuário abre o aplicativo mobile e interage com a interface para criar um novo produto.

@@ -107,7 +107,7 @@ export function OrderModal({ visible, order, onCloseModal }: OrderModalProps) {
           {order.products.map(({ product, quantity }) => (
             <div key={product.id} className="item">
               <img
-                src={product.imagePath}
+                src={`https://pub-da0527aa634544b49fddf3db4b6e1680.r2.dev/${product.imagePath}`}
                 alt={product.name}
                 width={56}
                 height={28.51}
